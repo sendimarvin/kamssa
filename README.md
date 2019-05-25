@@ -1,2 +1,2 @@
 # kamssa
-A web-based system that for Kampala Integrated Secondary Schools Examination Bureau
+A web-based system for Kampala Integrated Secondary Schools Examination Bureau
