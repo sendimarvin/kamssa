@@ -41,6 +41,6 @@
 		}
 	</style>
 
-	<script src="jQuery/jquery.min.js"></script>
-	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<script src="../jQuery/jquery.min.js"></script>
+	<script src="../bootstrap/js/bootstrap.min.js"></script>
 </head>

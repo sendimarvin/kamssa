@@ -8,13 +8,16 @@
 
 
 
-
-<div class="container">
-<?php 
-    require 'Includes/navbar_index.php';
-?>
-
+<div class = "row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+    <?php 
+        require 'Includes/navbar_index.php';
+    ?>
+    </div>
+    <div class="col-md-1"></div>
 </div>
+
 
 </body>
 </html>
