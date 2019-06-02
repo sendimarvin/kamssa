@@ -24,6 +24,10 @@
     .container .jumbotron {
         border-radius: 6px ;
     }
+
+	.condensed-form-div {
+		margin: 0px;
+	}
 </style>
 
 <script src="../jQuery/jquery.min.js"></script>
