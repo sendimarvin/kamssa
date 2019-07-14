@@ -19,7 +19,7 @@
 	<title>KAMSSA</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel = "icon" type = "image/png" href = "Images/logo.png	">
+	<link rel = "icon" type = "image/png" href = "Images/logo.jpeg	">
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
 
 	<style>
@@ -37,14 +37,7 @@
 </head>
 <body>
 
-
-
-
 <div class="container">
-
-
-
-
 	<div class="row">
 		<div class="col-md-3"></div>
 		<div class="col-md-6">
@@ -52,7 +45,7 @@
 			
 			<!-- begin logo section -->
 			<div class="text-center">
-				<img  src="Images/logo.png" alt="John Doe" class="mr-3 mt-3 rounded-circle" style="width:150px;">
+				<img  src="Images/logo.jpeg" alt="John Doe" class="mr-3 mt-3 " style="width:150px;">
 			</div>
 			<br>
 			<!-- End of logo section -->

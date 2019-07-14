@@ -48,7 +48,7 @@ if (isset($_POST['submit'])) { //means form data
 
 
     if ($user_found) { //take to home page
-        header("Location: ../home.php");
+        header("Location: ../Student/");
     } else { //go back to index page with error
         $_SESSION['Errors'] = "User not found";
         header("Location: ../index.php");
