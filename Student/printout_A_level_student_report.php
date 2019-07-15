@@ -6,9 +6,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-
-
-class OLevelStudentReport {
+class ALevelStudentReport {
 
      const A_GRADE = [ '1,1,3', '1,2,3', '2,2,3', '1,1', '1,2', '2,2'];
      const B_GRADE = ['1,2,4', '2,2,4', '2,2,3', '3,3,4', '1,1,4', '3,3,3', '2,3,4', '1,2', '2,3', '3,3'];
@@ -19,13 +17,16 @@ class OLevelStudentReport {
      const F_GRADE = [];
 
     // grade for core subjects
-     const O_GRADE_CORE = ['A', 'B', 'C', 'D', 'E', 'O'];
+    const O_GRADE_CORE = ['A', 'B', 'C', 'D', 'E', 'O'];
 
     private $student_id  = 0;
     private $conn = null;
 
     public $student_points = 0;
     public $is_missing_core = false;
+    private $results_temp = null;
+
+    public $student_combination = "N/A";
 
     function __construct ($db_conn, $student_id)
     {
@@ -50,7 +51,6 @@ class OLevelStudentReport {
         return $results; 
     }
 
-
     public function getStudentSchoolDetails ()
     {
         $sql = "SELECT SCHOOLS.* 
@@ -72,8 +72,6 @@ class OLevelStudentReport {
             JOIN A_level_subejcts AS SUBJECTS ON SUBJECTS.id = PAPERS.subject_id
             WHERE MARKS.student_id = {$this->student_id} GROUP BY PAPERS.subject_id";
 
-        // echo $sql;
-        // die();
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
@@ -139,7 +137,7 @@ class OLevelStudentReport {
 
 
             // GRADE CORE SUBJECTS
-            if (intVal($subject->is_core) === 1) {
+            if (intVal($subject->is_core) > 0) {
                 if (array_search($subject_grade, self::O_GRADE_CORE) !== false ) {
                     $subject_grade = 'O';
                     $paper_points = 1;
@@ -158,7 +156,38 @@ class OLevelStudentReport {
         }
         $this->student_points = $student_points;
 
-        return array_merge($results );
+        $this->results_temp = $results;
+
+        
+        return $results;
+    }
+
+    /**
+     * Get the combination from a student subject
+     * @param object => student marks
+     * @return string combination
+     */
+    public function getStudentCombination ()
+    {
+        $subjects = $this->results_temp;
+        $found_subjects = [];
+        foreach ($subjects as $key => $subject_data) {
+            if (intVal($subject_data->is_core) != 2) {
+                // if (intVal($subject_data->is_core) == 0) {
+                //     $subject_data->name = substr($subject_data->name, 0, 1);
+                // }
+                $found_subjects[$subject_data->name] = intVal($subject_data->is_core); 
+            }
+               
+        }
+        arsort($found_subjects);
+        $found_subjects = array_reverse($found_subjects);
+        $found_subjects = array_keys($found_subjects);
+        if (sizeof($found_subjects) > 1) {
+            $found_subjects[count($found_subjects) - 1] = ' / ' . $found_subjects[count($found_subjects) - 1];
+        }
+        $found_subjects = implode($found_subjects);
+        return  $found_subjects;
     }
 }
 
@@ -175,6 +204,11 @@ $studet_ids = explode(',', $student_id_collection);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>A Level Student Report</title>
+    <style>
+        .report-text {
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
     
@@ -193,10 +227,10 @@ $studet_ids = explode(',', $student_id_collection);
         $page_count = 0;
         foreach ($studet_ids as $key => $student_id):
             $page_count++;
-            $OLevelStudentReport = new OLevelStudentReport ($db_conn->conn, $student_id);
-            $student_details = $OLevelStudentReport->getStudenDetatils();
-            $school_details = $OLevelStudentReport->getStudentSchoolDetails();
-            $studentSubejcts = $OLevelStudentReport->getStudentSubjectMarks();
+            $ALevelStudentReport = new ALevelStudentReport ($db_conn->conn, $student_id);
+            $student_details = $ALevelStudentReport->getStudenDetatils();
+            $school_details = $ALevelStudentReport->getStudentSchoolDetails();
+            $studentSubejcts = $ALevelStudentReport->getStudentSubjectMarks();
     ?>
         <!-- begin section for generaing students report -->
         <section style="border:solid; padding: 10px; width: 800px; margin:auto;">
@@ -205,7 +239,7 @@ $studet_ids = explode(',', $student_id_collection);
             <table style="margin-left: 5%;">
                 <tr>
                     <td>
-                        <img src="../Images/logo.jpeg" style="width:130px; height: 130px;" alt="">
+                        <img src="../Images/logo.jpeg" style="width:100px; height: 1o0px;" alt="">
                     </td>
                     <td>
                         <h2 stlye="display:inline">KAMPALA INTEGRATED SECONDARY SCHOOLS' <br> EXAMINATION BUREAU 2019</h2>
@@ -214,21 +248,21 @@ $studet_ids = explode(',', $student_id_collection);
 
             </table>
                 
-                <h4 style="margin:0px;">UACE MOCK PASSLIP</h4>
+                <h4 style="margin:0px;" class="report-text">UACE MOCK PASSLIP</h4>
             </div>
 
-            <table style="margin-left:10%;">
+            <table style="margin-left:5%;">
                 <tr>
-                    <th>Student's Name</th>
+                    <th class="report-text">STUDENT'S NAME</th>
                     <td><span><?=$student_details->second_name?> <?=$student_details->first_name?></span>  </td>
 
-                    <th>School</th>
+                    <th class="report-text">SCHOOL</th>
                     <td><span><?=$school_details->name?></span>  </td>
 
-                    <th>District</th>
+                    <th class="report-text">DISTRICT</th>
                     <td><span><?=$school_details->district?></span>  </td>
 
-                    <th>Center No:</th>
+                    <th class="report-text">CENTER NO:</th>
                     <td><span><?=$school_details->center_no?></span>  </td>
 
                 </tr>
@@ -236,12 +270,13 @@ $studet_ids = explode(',', $student_id_collection);
 
 
             <div style="text-align:center;">
+                <span style="font-weight:bold" class="report-text">COMBINATION <?= $ALevelStudentReport->getStudentCombination()?></span>
                 <table style="margin-left:auto; margin-right:auto;">
                     <thead>
                         <tr>
-                            <th style="text-align:left; width:20px;">&nbsp;&nbsp;&nbsp;</th>
-                            <th style="text-align:left; ">Subject</th>
-                            <th style="text-align:center; width:200px;">Grade</th>
+                            <th style="text-align:left; width:40px;">No&nbsp;</th>
+                            <th style="text-align:left; width:100px;" class="report-text">Subject</th>
+                            <th style="text-align:center; width:200px;" class="report-text">Grade</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -249,16 +284,16 @@ $studet_ids = explode(',', $student_id_collection);
                             foreach ($studentSubejcts as $counter => $value):
                         ?>
                             <tr>
-                                <td style="text-align:left; width:20px;"><?=($counter + 1)?></td>
-                                <td style="text-align:left; "><?=$value->name?></td>
-                                <td style="text-align:center; width:200px;"><?=$value->grade?></td>
+                                <td style="text-align:left; width:40px;" class="report-text"><?=($counter + 1)?></td>
+                                <td style="text-align:left; width:100px;" class="report-text"><?=$value->name?></td>
+                                <td style="text-align:center; width:200px;" class="report-text"><?=$value->grade?></td>
                             </tr>
                         <?php
                             endforeach;
                         ?>
                         <tr>
-                            <td colspan="2"><b>TOTAL:&nbsp;&nbsp;</b>POINTS&nbsp;</td>
-                            <td style="text-align:center; width:200px;">&nbsp;***<?=$OLevelStudentReport->student_points;?>***</td>
+                            <td colspan="2" class="report-text"> <b>TOTAL:&nbsp;&nbsp;</b>POINTS&nbsp;</td>
+                            <td style="text-align:center; width:200px;">&nbsp;***<?=$ALevelStudentReport->student_points;?>***</td>
                         </tr>
                     </tbody>
                 </table>
@@ -267,7 +302,7 @@ $studet_ids = explode(',', $student_id_collection);
             <br>
             <div>
                 <div style="text-align:center;">
-                    <span ><em>"Quality assessment for reliable results"</em></span>
+                    <span class="report-text"><em>"Quality assessment for reliable results"</em></span>
                 </div>
             </div>
 
