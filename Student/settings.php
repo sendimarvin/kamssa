@@ -83,7 +83,7 @@
         <ul id="menu-navbar" class="content-wrapper">
             <li><a href="index.php">KAMSSA HOME</a></li>
             <!-- <li><a href="#news">News</a></li> -->
-            <li><a href="settings.php">Settings</a></li>
+            <li><a href="#contact">Settings</a></li>
 
             <li id="logout-text-section"><a href="../index.php?logout"><span id="logout-text">Logout</span></a></li>
         </ul>
@@ -93,24 +93,22 @@
                 <div class="easyui-tabs" data-options="fit:true,border:false,plain:true">
 
                     <!-- begin section for schools -->
-                    <div title="Schools"style="padding:10px">
+                    <div title="Users"style="padding:10px">
 
-                        <table id="schools-dg" class="easyui-datagrid" title="School Profile" style="width:1170px;height:500px"
+                        <table id="schools-dg" class="easyui-datagrid" title="Users Profile" style="width:1170px;height:500px"
                             data-options="singleSelect:true,collapsible:true,method:'get', pagination:'true', url:'update_school.php?get_all_schools', fitcolumns:true" toolbar="#schools-dg-toolbar">
                             <thead>
                                 <tr>
                                     <th data-options="field:'id',width:80">No</th>
-                                    <th data-options="field:'name',width:300">School Name</th>
-                                    <th data-options="field:'center_no',width:200,align:'center'">Center No.</th>
-                                    <th data-options="field:'district',width:280,align:'left'">District</th>
-                                    <th data-options="field:'no_of_students',width:120, align:'center'">No. of Students</th>
-                                    <th data-options="field:'action',width:180,align:'center'" formatter= "schoolActionFormtter">Action</th>
+                                    <th data-options="field:'user_name',width:300">User name</th>
+                                    <th data-options="field:'permissions',width:200,align:'center'">Access</th>
+                                    <th data-options="field:'action',width:180,align:'center'" formatter= "userActionFormtter">Action</th>
                                 </tr>
                             </thead>
                         </table>
 
                         <div id="schools-dg-toolbar">
-                            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onClick="openAddSchoolDlg()">Add</a>
+                            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onClick="openAddUserDlg()">Add</a>
                             <input type="text" id="school-section-general-search" placeholder="Search..." style="width:300px;height:20px;">
                         </div>
                 
@@ -120,182 +118,15 @@
                     <!-- Begin Students Section -->
                     <div title="Students" style="padding:5px">
 
-                        <div class="easyui-tabs" data-options="fit:true,border:false,plain:true">
-
-                            <!-- begin tab section for update o-lvel student information -->
-                            <div title="O-Level Students" style="padding:5px">
-
-                                <table id="olevel-students-dg" class="easyui-datagrid" title="O-level Students" style="width:1150px;height:458px"
-                                    data-options="singleSelect:true,collapsible:true,method:'get', pagination:'true', url:'update_school.php?get_all_o_level_students'" toolbar="#olevel-students-dg-toolbar">
-                                    <thead>
-                                        <tr>
-                                            <th data-options="field:'id',width:80, hidden:true">No</th>
-                                            <th data-options="field:'school_name',width:250">School</th>
-                                            <th data-options="field:'center_no',width:100">Center No</th>
-                                            <th data-options="field:'index_no',width:200">Index No.</th>
-                                            <th data-options="field:'first_name',width:200">First Name</th>
-                                            <th data-options="field:'second_name',width:200">Second Name</th>
-                                            <th data-options="field:'action',width:120,align:'center'" formatter= "oLevelStudentActionFormtter">Action</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-
-                                <div id="olevel-students-dg-toolbar">
-                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onClick="openAddOLevelStudentDlg()">Add</a>
-                                    <input type="text" id="o-level-school-search" >&nbsp;&nbsp;&nbsp;
-                                    <input type="text" id="o-level-general-search" placeholder="search center no, index no and name" style="width:300px;height:20px;">
-                                </div>
-
-                            </div>
-                            <!-- end tab section for update o-lvel student information -->
-
-                            <!-- begin tab section for update A-lvel student information -->
-                            <div title="A-Level Students" style="padding:5px">
-                                <table id="Alevel-students-dg" class="easyui-datagrid" title="A-level Students" style="width:1150px;height:458px"
-                                    data-options="singleSelect:true,collapsible:true,method:'get', pagination:'true', url:'update_school.php?get_all_A_level_students'" toolbar="#Alevel-students-dg-toolbar">
-                                    <thead>
-                                        <tr>
-                                            <th data-options="field:'id',width:80, hidden:true">No</th>
-                                            <th data-options="field:'school_name',width:250">School</th>
-                                            <th data-options="field:'center_no',width:100">Center No</th>
-                                            <th data-options="field:'index_no',width:200">Index No.</th>
-                                            <th data-options="field:'first_name',width:200">First Name</th>
-                                            <th data-options="field:'second_name',width:200">Second Name</th>
-                                            <th data-options="field:'action',width:120,align:'center'" formatter= "ALevelStudentActionFormtter">Action</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-
-                                <div id="Alevel-students-dg-toolbar">
-                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onClick="openAddALevelStudentDlg()">Add</a>
-                                    <input type="text" id="A-level-school-search" >&nbsp;&nbsp;&nbsp;
-                                    <input type="text" id="A-level-general-search" placeholder="search center no, index no and name" style="width:300px;height:20px;">
-                                </div>
-                            </div>
-                            <!-- end tab section for update A-lvel student information -->
-
-                        </div>
-
                     </div>
                     <!-- End Students Section -->
 
                     <div title="Results" style="padding:5px">
                         
-                        <div class="easyui-tabs" data-options="fit:true,border:false,plain:true">
-                            <div title="O-Level Students Marks" style="padding:5px">
-                                <!-- Olevel marks -->
-
-                                <table id="olevel-students-marks-dg" class="easyui-datagrid" title="O-level Students Marks" style="width:1150px;height:458px"
-                                    data-options="singleSelect:true,collapsible:true,method:'get', pagination:'true', url:'update_school.php?get_all_o_level_students'" toolbar="#olevel-students-marks-dg-toolbar">
-                                    <thead>
-                                        <tr>
-                                            <th data-options="field:'id',width:80, hidden:true">No</th>
-                                            <th data-options="field:'school_name',width:250">School</th>
-                                            <th data-options="field:'center_no',width:100">Center No</th>
-                                            <th data-options="field:'index_no',width:200">Index No.</th>
-                                            <th data-options="field:'first_name',width:200">First Name</th>
-                                            <th data-options="field:'second_name',width:200">Second Name</th>
-                                            <th data-options="field:'action',width:120,align:'center'" formatter= "oLevelStudentMarksActionFormtter">Action</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-
-                                <div id="olevel-students-marks-dg-toolbar">
-                                    <input type="text" id="o-level-school-marks-search" >&nbsp;&nbsp;&nbsp;
-                                    <input type="text" id="o-level-marks-general-search" placeholder="search index no and name" style="width:300px;height:20px;">
-                                </div>
-
-
-
-                            </div>
-
-                            <!-- begin section for adding i alevel marks -->
-                            <div title="A-Level Students Marks" style="padding:5px">
-
-                                <table id="Alevel-students-marks-dg" class="easyui-datagrid" title="A-level Students Marks" style="width:1150px;height:458px"
-                                    data-options="singleSelect:true,collapsible:true,method:'get', pagination:'true', url:'update_school.php?get_all_A_level_students'" toolbar="#Alevel-students-marks-dg-toolbar">
-                                    <thead>
-                                        <tr>
-                                            <th data-options="field:'id',width:80, hidden:true">No</th>
-                                            <th data-options="field:'school_name',width:250">School</th>
-                                            <th data-options="field:'center_no',width:100">Center No</th>
-                                            <th data-options="field:'index_no',width:200">Index No.</th>
-                                            <th data-options="field:'first_name',width:200">First Name</th>
-                                            <th data-options="field:'second_name',width:200">Second Name</th>
-                                            <th data-options="field:'action',width:120,align:'center'" formatter= "ALevelStudentMarksActionFormtter">Action</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                                <!-- dialog buttons for students marks grid -->
-                                <div id="Alevel-students-marks-dg-toolbar">
-                                    <input type="text" id="A-level-school-marks-search" >&nbsp;&nbsp;&nbsp;
-                                    <input type="text" id="A-level-marks-general-search" placeholder="search index no and name" style="width:300px;height:20px;">
-                                </div>
-
-                            </div>
-                            <!-- end section for adding i alevel marks -->
-                        </div>
-
                     </div>
 
 
                     <div title="Reports" style="padding:5px">
-                        <!-- Reports -->
-                        <div class="easyui-tabs" data-options="fit:true,border:false,plain:true">
-
-                            <!-- end section add Olevel report -->
-                            <div title="O-Level Students Report" style="padding:5px">
-
-                                <table id="olevel-students-report-dg" class="easyui-datagrid" title="O-level Students Marks" style="width:1150px;height:458px"
-                                    data-options="singleSelect:false,multiple:true,collapsible:true,method:'get', pagination:'true', url:'update_school.php?get_all_o_level_students'" toolbar="#olevel-students-report-dg-toolbar">
-                                    <thead>
-                                        <tr>
-                                            <th data-options="field:'id',width:80, hidden:true">No</th>
-                                            <th data-options="field:'select',width:80, checkbox:true">Select All</th>
-                                            <th data-options="field:'school_name',width:250">School</th>
-                                            <th data-options="field:'center_no',width:100">Center No</th>
-                                            <th data-options="field:'index_no',width:200">Index No.</th>
-                                            <th data-options="field:'first_name',width:200">First Name</th>
-                                            <th data-options="field:'second_name',width:200">Second Name</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-
-                                <div id="olevel-students-report-dg-toolbar">
-                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-print'" onClick="printOLevelStudentReport()">Print Report</a>
-                                    <input type="text" id="o-level-school-print-search" >&nbsp;&nbsp;&nbsp;
-                                    <input type="text" id="o-level-print-general-search" placeholder="search index no and name" style="width:300px;height:20px;">
-                                </div> 
-
-                            </div>
-                            <!-- end section add Olevel report -->
-
-                            <!-- begin section for generating Alevel report -->
-                            <div title="A-Level Students Marks" style="padding:5px">
-                                <table id="Alevel-students-report-dg" class="easyui-datagrid" title="A-level Students Marks" style="width:1150px;height:458px"
-                                    data-options="singleSelect:false,multiple:true,collapsible:true,method:'get', pagination:'true', url:'update_school.php?get_all_A_level_students'" toolbar="#Alevel-students-report-dg-toolbar">
-                                    <thead>
-                                        <tr>
-                                            <th data-options="field:'id',width:80, hidden:true">No</th>
-                                            <th data-options="field:'select',width:80, checkbox:true">Select All</th>
-                                            <th data-options="field:'school_name',width:250">School</th>
-                                            <th data-options="field:'center_no',width:100">Center No</th>
-                                            <th data-options="field:'index_no',width:200">Index No.</th>
-                                            <th data-options="field:'first_name',width:200">First Name</th>
-                                            <th data-options="field:'second_name',width:200">Second Name</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-
-                                <div id="Alevel-students-report-dg-toolbar">
-                                    <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-print'" onClick="printALevelStudentReport()">Print Report</a>
-                                    <input type="text" id="A-level-school-print-search" >&nbsp;&nbsp;&nbsp;
-                                    <input type="text" id="A-level-print-general-search" placeholder="search index no and name" style="width:300px;height:20px;">
-                                </div>
-                            </div>
-                            <!-- end section for generating Alevel report -->
-                        </div>
-                        
 
 
                     </div>
@@ -317,30 +148,29 @@
                     <input type="hidden" name="school_id" id="school_id">
 
                     <tr>
-                        <td>School Name</td>
+                        <td>User Name</td>
                         <td>
-                            <input class="easyui-validatebox" type="text" id="school_name" name="school_name"  required>
+                            <input class="easyui-validatebox" type="text" id="user_name" name="user_name"  required>
                         </td>
                     </tr>
 
                     <tr>
-                        <td>Center No</td>
+                        <td>Password</td>
                         <td>
-                            <input class="easyui-validatebox" type="text" name="center_no" id="center_no" required>
+                            <input class="easyui-validatebox" type="password" name="password" id="password" required>
                         </td>
                     </tr>
 
                     <tr>
-                        <td>No of Students</td>
+                        <td>Permissions</td>
                         <td>
-                            <input class="easyui-validatebox" type="number" name="number_of_students" id="number_of_students" required>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>District</td>
-                        <td>
-                            <input class="easyui-validatebox" type="text" id="district" name="district" required>
+                            <input type="text" class="easyui-combogrid" 
+                                data-options="url:'update_settings.php?get_user_permissions', 
+                                multiple: true, singleSelect: false,
+                                editable:'false', idField:'id', textField:'name', 
+                                columns: [[{field:'select',title:'select',width:50, checkbox:true},
+                                {field:'name',title:'Permission',width:150}]] " 
+                                name="user_permissions" id="user_permissions" required>
                         </td>
                     </tr>
                 </table>
@@ -863,7 +693,7 @@
         
     </div>
     <script>
-        function openAddSchoolDlg ()
+        function openAddUserDlg ()
         {
             $('#update-school-form').form('clear');
             $('#school-dlg').dialog('setTitle', 'Add School').dialog('open');
@@ -985,6 +815,41 @@
 
         function saveSchool ()
         {
+
+
+            let user_name = $('#user_name').val();
+            let password = $('#password').val();
+            let permissions = $('#user_permissions').combogrid('getValues').join("");
+
+            if (!user_name) {
+                return showMessager("Wanring", "Please Provide a user name");
+            }
+
+            if (!password) {
+                return showMessager("Wanring", "Please Provide a password");
+            }
+
+            if (!permissions) {
+                return showMessager("Wanring", "Please Provide atleasty one user permission");
+            }
+
+            $.post('update_settings.php?save_user_permissions', {
+                user_name:  user_name,
+                passsword: password,
+                permissions: permissions
+            }, function (response) {
+                
+                if (response.success) {
+                    showMessager('Info', 'Update successfull');
+                } else {
+                    showMessager('Warning', response.message);
+                }
+
+            });
+
+
+
+
             $('#update-school-form').form('submit', {
                 url: "update_school.php?add_update_school",
                 onSubmit: function (param) {
@@ -1077,7 +942,7 @@
             }
         }
 
-        function schoolActionFormtter (value, row, index)
+        function userActionFormtter (value, row, index)
         {
             if (row.id) {
                 return '<input type="button" value="edit" onClick="editSchool()"> <input type="button" value="delete" onClick="deleteSchool('+row.id+')">';
