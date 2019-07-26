@@ -95,21 +95,21 @@
                     <!-- begin section for schools -->
                     <div title="Users"style="padding:10px">
 
-                        <table id="schools-dg" class="easyui-datagrid" title="Users Profile" style="width:1170px;height:500px"
-                            data-options="singleSelect:true,collapsible:true,method:'get', pagination:'true', url:'update_school.php?get_all_schools', fitcolumns:true" toolbar="#schools-dg-toolbar">
+                        <table id="users-dg" class="easyui-datagrid" title="Users Profile" style="width:1170px;height:500px"
+                            data-options="singleSelect:true,collapsible:true,method:'get', pagination:'true', url:'update_settings.php?get_all_users', fitcolumns:false" toolbar="#settings-dg-toolbar">
                             <thead>
                                 <tr>
                                     <th data-options="field:'id',width:80">No</th>
                                     <th data-options="field:'user_name',width:300">User name</th>
-                                    <th data-options="field:'permissions',width:200,align:'center'">Access</th>
+                                    <th data-options="field:'user_permission_names',width:600,align:'center'">Access</th>
                                     <th data-options="field:'action',width:180,align:'center'" formatter= "userActionFormtter">Action</th>
                                 </tr>
                             </thead>
                         </table>
 
-                        <div id="schools-dg-toolbar">
+                        <div id="settings-dg-toolbar">
                             <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onClick="openAddUserDlg()">Add</a>
-                            <input type="text" id="school-section-general-search" placeholder="Search..." style="width:300px;height:20px;">
+                            <input type="text" id="user-section-general-search" placeholder="Search..." style="width:300px;height:20px;">
                         </div>
                 
                     </div>
@@ -137,15 +137,15 @@
 
 
         <!-- Begin School Dialog -->
-        <div id="school-dlg" class="easyui-dialog" title="Add School" style="width:600px;height:300px;top:100px;padding:10px;"
+        <div id="user-dlg" class="easyui-dialog" title="Add School" style="width:600px;height:300px;top:100px;padding:10px;"
                 data-options="iconCls:'icon-save',resizable:true,modal:true, closed:true, closable:false" 
-                buttons="#school-dlg-btns">
+                buttons="#user-dlg-btns">
             
             
-            <form id="update-school-form" class="easyui-form" method="POST" novalidate="false">
+            <form id="update-user-form" class="easyui-form" method="POST" novalidate="false">
                 <table>
 
-                    <input type="hidden" name="school_id" id="school_id">
+                    <input type="hidden" name="user_id" id="user_id">
 
                     <tr>
                         <td>User Name</td>
@@ -154,7 +154,20 @@
                         </td>
                     </tr>
 
-                    <tr>
+                    <tr class="change_password">
+                        <td>Change Password</td>
+                        <td>
+                            <input type="checkbox" id="change_password" onClick="
+                                if ($(this).prop('checked')) {
+                                    changePassword();
+                                } else {
+                                    donotChangePassword();
+                                }
+                            " >
+                        </td>
+                    </tr>
+
+                    <tr class="password_input">
                         <td>Password</td>
                         <td>
                             <input class="easyui-validatebox" type="password" name="password" id="password" required>
@@ -167,7 +180,7 @@
                             <input type="text" class="easyui-combogrid" 
                                 data-options="url:'update_settings.php?get_user_permissions', 
                                 multiple: true, singleSelect: false,
-                                editable:'false', idField:'id', textField:'name', 
+                                editable:false, idField:'id', textField:'name', 
                                 columns: [[{field:'select',title:'select',width:50, checkbox:true},
                                 {field:'name',title:'Permission',width:150}]] " 
                                 name="user_permissions" id="user_permissions" required>
@@ -180,9 +193,9 @@
                 
         </div>
 
-        <div id="school-dlg-btns">
+        <div id="user-dlg-btns">
             <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-save'" onClick="saveSchool()">Save</a>
-            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" onClick="$('#school-dlg').dialog('close');">Close</a>
+            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" onClick="$('#user-dlg').dialog('close');">Close</a>
         </div>
         <!-- End School Dialog -->
 
@@ -695,8 +708,10 @@
     <script>
         function openAddUserDlg ()
         {
-            $('#update-school-form').form('clear');
-            $('#school-dlg').dialog('setTitle', 'Add School').dialog('open');
+
+            donotChangePasswordNewUser();
+            $('#update-user-form').form('clear');
+            $('#user-dlg').dialog('setTitle', 'Add School').dialog('open');
         }
 
         function searchOLevelSchool ()
@@ -816,16 +831,16 @@
         function saveSchool ()
         {
 
-
+            let user_id = $('#user_id').val().trim();
             let user_name = $('#user_name').val();
             let password = $('#password').val();
-            let permissions = $('#user_permissions').combogrid('getValues').join("");
+            let permissions = $('#user_permissions').combogrid('getValues').join(",");
 
             if (!user_name) {
                 return showMessager("Wanring", "Please Provide a user name");
             }
 
-            if (!password) {
+            if (!user_id && !password) {
                 return showMessager("Wanring", "Please Provide a password");
             }
 
@@ -833,32 +848,39 @@
                 return showMessager("Wanring", "Please Provide atleasty one user permission");
             }
 
+            if (user_id && user_id > 0 && $('#change_password').prop('checked') && !password) {
+                return showMessager("Wanring", "Please Provide a password");
+            }
+
             $.post('update_settings.php?save_user_permissions', {
+                user_id: user_id,
                 user_name:  user_name,
-                passsword: password,
+                password: password,
                 permissions: permissions
             }, function (response) {
                 
                 if (response.success) {
                     showMessager('Info', 'Update successfull');
+                    $('#user-dlg').dialog('close');
+                    $('#users-dg').datagrid('reload');
                 } else {
                     showMessager('Warning', response.message);
                 }
 
-            });
+            }, 'JSON');
 
 
 
 
-            $('#update-school-form').form('submit', {
+            $('#update-user-form').form('submit', {
                 url: "update_school.php?add_update_school",
                 onSubmit: function (param) {
                     return $(this).form('validate');
                 },
                 success: function (data) {
                     //reload schools grid from here
-                    $('#school-dlg').dialog('close');
-                    $('#schools-dg').datagrid('reload');
+                    $('#user-dlg').dialog('close');
+                    $('#users-dg').datagrid('reload');
                 }
             }); 
         }
@@ -945,7 +967,7 @@
         function userActionFormtter (value, row, index)
         {
             if (row.id) {
-                return '<input type="button" value="edit" onClick="editSchool()"> <input type="button" value="delete" onClick="deleteSchool('+row.id+')">';
+                return '<input type="button" value="edit" onClick="editUser()"> <input type="button" value="delete" onClick="deleteUser('+row.id+')">';
             }
         }
 
@@ -976,14 +998,18 @@
             }
         }
 
-        function deleteSchool (id) 
+        function deleteUser (id) 
         {
-            $.messager.confirm('Confirm', 'Are you sure you want to delete this school?', function (r) {
+            id = parseInt(id);
+            if (id === 1) {
+                return showMessager('Warning', 'You can not delete this user');
+            }
+            $.messager.confirm('Confirm', 'Are you sure you want to delete this User?', function (r) {
                 if (r) {
-                    $.post('update_school.php?delete_school', {id: id}, function (response){
+                    $.post('update_settings.php?delete_user', {id: id}, function (response){
                     if (response.success) {
-                        $('#schools-dg').datagrid('reload');
-                        showMessager('Info', 'School Deleted Successfully');
+                        $('#users-dg').datagrid('reload');
+                        showMessager('Info', 'User Deleted Successfully');
                     } else {
                         showMessager('Info', response.message);
                     }
@@ -1001,27 +1027,59 @@
             });
         }
 
-        function editSchool ()
+        function editUser ()
         {
-
             setTimeout(() => {
-                var row = $('#schools-dg').datagrid('getSelected');
+                var row = $('#users-dg').datagrid('getSelected');
                 if (!row) {
                     showMessager('Warning', 'Please select a school to edit');
                     return;
                 }
                 
-                $('#update-school-form').form('clear');
-                $('#school_id').val(row.id);
-                $('#school_name').val(row.name);
-                $('#center_no').val(row.center_no);
-                $('#number_of_students').val(row.no_of_students);
-                $('#district').val(row.district); 
-                $('#school-dlg').dialog('setTitle', 'Edit School').dialog('open');
+                $('#update-user-form').form('clear');
+                $('#user_id').val(row.id);
+                $('#user_name').val(row.user_name);
 
+                donotChangePassword ();
+                
+
+                var user_perms = row.user_permission_ids.split(',');
+                var new_uers_perms = [];
+
+                // convert array data t0 string
+                for (var i = 0; i < user_perms.length; i++) {
+                    new_uers_perms.push(parseInt(user_perms[i]));
+                }
+                
+                console.log(new_uers_perms);
+                $('#user_permissions').combogrid('setValue', new_uers_perms);
+
+                $('#user-dlg').dialog('open');
             }, 500);
             
 
+        }
+
+
+        function donotChangePasswordNewUser ()
+        {
+            $('#change_password').prop('checked', false);
+            $('.password_input').show();
+            $('.change_password').hide();
+        }
+
+        function donotChangePassword ()
+        {   
+            $('#password').val('');
+            $('#change_password').prop('checked', false);
+            $('.password_input').hide('slow');
+            $('.change_password').show();
+        }
+
+        function changePassword ()
+        {
+            $('#change_password').prop('checked', true);
+            $('.password_input').show('slow');
         }
 
         function openAddOLevelStudentDlg ()
@@ -1470,13 +1528,13 @@
 
     <script>
         $(function () {
-            $('#update-school-form, #o_level_student_subject-form, #update-o_level-form, #update-A_level-form ').form({
+            $('#update-user-form, #o_level_student_subject-form, #update-o_level-form, #update-A_level-form ').form({
                 url: ""
             });
 
-            $('#school-section-general-search').keyup(function (e) {
+            $('#user-section-general-search').keyup(function (e) {
                 var search = $(this).val();
-                $('#schools-dg').datagrid({
+                $('#users-dg').datagrid({
                     queryParams: {
                         search: search
                     }

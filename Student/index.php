@@ -1,3 +1,17 @@
+
+
+<?php
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+
+    // print_r($_SESSION);
+    // die;
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -83,23 +97,27 @@
         <ul id="menu-navbar" class="content-wrapper">
             <li><a href="index.php">KAMSSA HOME</a></li>
             <!-- <li><a href="#news">News</a></li> -->
+            <?php if ($_SESSION['Settings']): ?>
             <li><a href="settings.php">Settings</a></li>
+            <?php endif;?>
 
             <li id="logout-text-section"><a href="../index.php?logout"><span id="logout-text">Logout</span></a></li>
         </ul>
 
         <div class="easyui-layout" style="width:auto;height:600px;">
-            <div data-options="region:'center',title:'KAMSSA'">
+            <div data-options="region:'center',title:'KAMSSA'" >
                 <div class="easyui-tabs" data-options="fit:true,border:false,plain:true">
 
                     <!-- begin section for schools -->
+                    <?php if($_SESSION["Schools"]):?>
                     <div title="Schools"style="padding:10px">
 
                         <table id="schools-dg" class="easyui-datagrid" title="School Profile" style="width:1170px;height:500px"
                             data-options="singleSelect:true,collapsible:true,method:'get', pagination:'true', url:'update_school.php?get_all_schools', fitcolumns:true" toolbar="#schools-dg-toolbar">
                             <thead>
                                 <tr>
-                                    <th data-options="field:'id',width:80">No</th>
+                                    <th data-options="field:'id2',width:80 ">ID</th>
+                                    <th data-options="field:'id',width:80, hidden:true">No</th>
                                     <th data-options="field:'name',width:300">School Name</th>
                                     <th data-options="field:'center_no',width:200,align:'center'">Center No.</th>
                                     <th data-options="field:'district',width:280,align:'left'">District</th>
@@ -115,9 +133,11 @@
                         </div>
                 
                     </div>
+                    <?php endif;?>
                     <!-- End section for schools -->
 
                     <!-- Begin Students Section -->
+                    <?php if($_SESSION["Students"]):?>
                     <div title="Students" style="padding:5px">
 
                         <div class="easyui-tabs" data-options="fit:true,border:false,plain:true">
@@ -177,8 +197,11 @@
                         </div>
 
                     </div>
+                    <?php endif;?>
                     <!-- End Students Section -->
 
+
+                    <?php if($_SESSION["Results"]):?>
                     <div title="Results" style="padding:5px">
                         
                         <div class="easyui-tabs" data-options="fit:true,border:false,plain:true">
@@ -237,8 +260,10 @@
                         </div>
 
                     </div>
+                    <?php endif;?>
 
 
+                    <?php if($_SESSION["Reports"]):?>
                     <div title="Reports" style="padding:5px">
                         <!-- Reports -->
                         <div class="easyui-tabs" data-options="fit:true,border:false,plain:true">
@@ -299,6 +324,9 @@
 
 
                     </div>
+                    <?php endif;?>
+
+
                 </div>
             </div>
         </div>

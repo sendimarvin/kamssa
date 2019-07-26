@@ -8,13 +8,14 @@ error_reporting(E_ALL);
 
 class ALevelStudentReport {
 
-     const A_GRADE = [ '1,1,3', '1,2,3', '2,2,3', '1,1', '1,2', '2,2'];
-     const B_GRADE = ['1,2,4', '2,2,4', '2,2,3', '3,3,4', '1,1,4', '3,3,3', '2,3,4', '1,2', '2,3', '3,3'];
-     const C_GRADE = ['1,1,5', '1,2,5', '2,2,5', '2,3,5', '3,4,5', '4,4,5', '1,4', '2,4', '3,4', '4,4'];
-     const D_GRADE = ['1,2,6', '1,1,6', '1,3,6', '2,2,6', '3,3,6', '4,5,6', '5,5,6', '1,5', '2,5', '3,5', '4,5', '5,5'];
-     const E_GRADE = ['1,1,7', '1,2,7', '3,3,7'];
-     const O_GRADE = ['1', '2', '3', '4', '5', '6', '1,7,7', '2,7,7', '3,7,7', '4,7,7', '5,7,7', '6,7,7', '7,7,7', '1,5', '2,5', '3,5', '4,5', '5,5'];
-     const F_GRADE = [];
+     const A_GRADE = [ '1,1,1', '1,1,2', '1,2,2', '1,2,3',  '2,2,2', '2,2,3', '1,1', '1,2', '2,2'];
+     const B_GRADE = ['1,1,4', '1,2,4', '1,3,4', '2,2,4', '2,3,4', '2,4,4', '3,3,3', '3,3,4', '1,3', '2,3', '3,3'];
+     const C_GRADE = ['1,1,5', '1,2,5', '1,3,5', '2,2,5', '2,3,5', '2,4,5', '3,3,5', '3,4,5', '3,5,5', '1,4', '2,4', '3,4', '4,4'];
+     const D_GRADE = ['1,1,6', '1,2,6', '1,3,6', '2,2,6', '2,3,6', '2,4,6', '3,3,6', '3,4,6', '3,5,6', '4,5,6', '1,5', '2,5', '3,5', '4,5', '5,5'];
+     const E_GRADE = ['1,1,7', '1,2,7', '1,3,7', '2,2,7', '2,3,7', '2,4,7', '3,3,7', '3,4,7', '3,5,7', '4,5,7', '1,6', '2,6', '3,6', '4,6', '5,6'];
+     const O_GRADE = [ '1', '2', '3', '4', '6', '1,7,7', '2,7,7', '3,7,7', '4,7,7', '5,7,7', '6,9,9', '7,7,7', '4,7,8', '4,8,7', '5,7,7', '5,8,7', '5,8,8', '6,7,7', '6,7,8', '5,7,9', '5,8,9', '6,6,9', '6,7,9', '6,8,9',
+        '1,7', '2,7', '3,7', '4,7', '5,7', '6,7', '7,7', '1,8', '2,8', '3,8', '4,8', '5,8', '6,8', '7,8', '8,8'];
+     const F_GRADE = ['1,9,9', '2,9,9', '3,9,9', '4,9,9', '5,9,9', '6,9,9', '7,9,9', '8,9,9', '9,9,9', '1,9', '2,9', '3,9', '4,9', '5,9', '6,9', '7,9', '8,9', '9,9'];
 
     // grade for core subjects
     const O_GRADE_CORE = ['A', 'B', 'C', 'D', 'E', 'O'];
@@ -169,25 +170,59 @@ class ALevelStudentReport {
      */
     public function getStudentCombination ()
     {
-        $subjects = $this->results_temp;
+        // kill the object reference
+        $subjects = json_decode(json_encode($this->results_temp));
+
         $found_subjects = [];
         foreach ($subjects as $key => $subject_data) {
             if (intVal($subject_data->is_core) != 2) {
-                // if (intVal($subject_data->is_core) == 0) {
-                //     $subject_data->name = substr($subject_data->name, 0, 1);
-                // }
+                if (intVal($subject_data->is_core) == 0) {
+                    $subject_data->name = substr($subject_data->name, 0, 1);
+                }
                 $found_subjects[$subject_data->name] = intVal($subject_data->is_core); 
             }
                
         }
+
         arsort($found_subjects);
         $found_subjects = array_reverse($found_subjects);
         $found_subjects = array_keys($found_subjects);
-        if (sizeof($found_subjects) > 1) {
-            $found_subjects[count($found_subjects) - 1] = ' / ' . $found_subjects[count($found_subjects) - 1];
+
+
+        if (count($found_subjects) <> 4) {
+            return "N/A";
         }
-        $found_subjects = implode($found_subjects);
-        return  $found_subjects;
+
+        return $this->getProperCombiation($found_subjects);
+
+    }   
+
+    private function getProperCombiation ($subjects)
+    {
+        $paper_codes = $subjects[0] . $subjects[1] . $subjects[2]; // i.e PCM / ICT
+        $paper_codes = str_split(strtoupper($paper_codes));
+        sort($paper_codes);
+        $paper_codes = implode("", $paper_codes);
+
+
+        $stmt = $this->conn->query("SELECT combination, (SELECT combination) AS combination2 FROM   A_level_combiantions WHERE 1=1");
+
+        foreach ($stmt->fetchAll(PDO::FETCH_OBJ) as $key => $combination_values) {
+            
+            // check for combination match
+            $first_part = str_split(strtoupper(trim(explode("/", $combination_values->combination)[0])));
+            sort($first_part);
+            $first_part = implode("", $first_part);
+
+            $fist_part2 = strtoupper(trim(explode("/", $combination_values->combination)[0]));
+            
+            if ( $paper_codes ==  $first_part ) {
+                return $fist_part2 . " / " .  $subjects[3];
+            }
+        }
+
+        return "N/A";
+
     }
 }
 

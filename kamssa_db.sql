@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 21, 2019 at 09:38 PM
+-- Generation Time: Jul 26, 2019 at 11:01 PM
 -- Server version: 5.7.23-0ubuntu0.18.04.1
 -- PHP Version: 7.2.10-0ubuntu0.18.04.1
 
@@ -19,6 +19,25 @@ SET time_zone = "+00:00";
 --
 -- Database: `kamssa`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `A_level_combiantions`
+--
+
+CREATE TABLE `A_level_combiantions` (
+  `id` int(5) NOT NULL,
+  `combination` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `A_level_combiantions`
+--
+
+INSERT INTO `A_level_combiantions` (`id`, `combination`) VALUES
+(1, 'PCM / ICT'),
+(2, 'PEM / ICT');
 
 -- --------------------------------------------------------
 
@@ -42,7 +61,10 @@ INSERT INTO `A_level_students` (`id`, `school_id`, `first_name`, `second_name`, 
 (2, 29, 'Julia', 'Micheals', '1233/66'),
 (3, 20, 'Kiberu', 'Alex', 'Mi4354'),
 (4, 20, 'Julia', 'sendi', '1233/66'),
-(5, 30, 'Marvin', 'Sendikaddiwa', '45545');
+(5, 30, 'Marvin', 'Sendikaddiwa', '45545'),
+(6, 20, 'Michecl', 'Omara', 'rrterter'),
+(7, 20, 'Julia', 'sendi', '1233/66'),
+(8, 20, 'jame', 'sss', 'te');
 
 -- --------------------------------------------------------
 
@@ -81,7 +103,19 @@ INSERT INTO `A_level_student_marks` (`id`, `subject_paper_id`, `marks`, `student
 (32, 44, 70.00, 5),
 (33, 45, 85.00, 5),
 (34, 35, 90.00, 5),
-(35, 36, 80.00, 5);
+(35, 36, 80.00, 5),
+(36, 1, 0.00, 6),
+(37, 8, 0.00, 6),
+(38, 9, 0.00, 6),
+(39, 35, 0.00, 6),
+(40, 36, 0.00, 6),
+(41, 37, 0.00, 6),
+(42, 38, 0.00, 6),
+(43, 39, 0.00, 6),
+(44, 58, 0.00, 6),
+(45, 59, 0.00, 6),
+(46, 1, 0.00, 7),
+(47, 1, 0.00, 8);
 
 -- --------------------------------------------------------
 
@@ -247,7 +281,9 @@ INSERT INTO `o_level_students` (`id`, `school_id`, `first_name`, `second_name`, 
 (4, 25, 'Arthur', 'Bukenya', '10324/55'),
 (5, 28, 'Marvin', 'Sendikaddiwa', '19324'),
 (6, 20, 'Obbo', 'Peter', 'udfpof'),
-(8, 29, 'Joew', 'Hamish', '345/6677');
+(8, 29, 'Joew', 'Hamish', '345/6677'),
+(9, 20, 'df', 'fdc', '54'),
+(10, 28, 'joew', 'kimera', 'wrer5');
 
 -- --------------------------------------------------------
 
@@ -315,7 +351,40 @@ INSERT INTO `o_level_student_marks` (`id`, `subject_paper_id`, `marks`, `student
 (52, 20, 99.00, 8),
 (53, 21, 100.00, 8),
 (54, 22, 100.00, 8),
-(55, 55, 99.00, 8);
+(55, 55, 99.00, 8),
+(56, 1, 0.00, 9),
+(57, 2, 0.00, 9),
+(58, 12, 0.00, 9),
+(59, 13, 0.00, 9),
+(60, 14, 0.00, 9),
+(61, 3, 0.00, 9),
+(62, 4, 0.00, 9),
+(63, 5, 0.00, 9),
+(64, 6, 0.00, 9),
+(65, 7, 0.00, 9),
+(66, 8, 0.00, 9),
+(67, 9, 0.00, 9),
+(68, 10, 0.00, 9),
+(69, 16, 0.00, 9),
+(70, 17, 0.00, 9),
+(71, 19, 0.00, 9),
+(72, 20, 0.00, 9),
+(73, 1, 0.00, 10),
+(74, 2, 0.00, 10),
+(75, 3, 0.00, 10),
+(76, 4, 0.00, 10),
+(77, 6, 0.00, 10),
+(78, 7, 0.00, 10),
+(79, 8, 0.00, 10),
+(80, 9, 0.00, 10),
+(81, 10, 0.00, 10),
+(82, 12, 0.00, 10),
+(83, 13, 0.00, 10),
+(84, 14, 0.00, 10),
+(85, 16, 0.00, 10),
+(86, 17, 0.00, 10),
+(87, 19, 0.00, 10),
+(88, 20, 0.00, 10);
 
 -- --------------------------------------------------------
 
@@ -327,39 +396,40 @@ CREATE TABLE `o_level_subejcts` (
   `id` int(5) NOT NULL,
   `name` varchar(100) NOT NULL,
   `subject_code` varchar(20) NOT NULL,
-  `is_core` enum('0','1') NOT NULL DEFAULT '0'
+  `is_core` enum('0','1') NOT NULL DEFAULT '0',
+  `default_papers` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `o_level_subejcts`
 --
 
-INSERT INTO `o_level_subejcts` (`id`, `name`, `subject_code`, `is_core`) VALUES
-(1, 'English', '', '1'),
-(2, 'Mathematics', '', '1'),
-(3, 'Biology', '', '1'),
-(4, 'Physics', '', '1'),
-(5, 'Chemistry', '', '1'),
-(6, 'History', '', '1'),
-(7, 'Geography', '', '1'),
-(8, 'Commerce', '', '0'),
-(9, 'Christian Religious Education', '', '0'),
-(10, 'Entrepreneurship Educ', '', '0'),
-(11, 'Fine Art', '', '0'),
-(12, 'Agric', '', '0'),
-(13, 'Luganda', '', '0'),
-(14, 'Lusoga', '', '0'),
-(15, 'Lunyakyitara', '', '0'),
-(16, 'Swahilli', '', '0'),
-(17, 'French', '', '0'),
-(18, 'Arabic', '', '0'),
-(19, 'Litereature', '', '0'),
-(20, 'Islamic Religious Education', '', '0'),
-(21, 'Computer Studies', '', '0'),
-(22, 'Accounts', '', '0'),
-(23, 'Clothing\'s and Textiles', '', '0'),
-(24, 'Food and Nutrition', '', '0'),
-(25, 'Lugunbara T', '', '0');
+INSERT INTO `o_level_subejcts` (`id`, `name`, `subject_code`, `is_core`, `default_papers`) VALUES
+(1, 'English', '', '1', '1,2'),
+(2, 'Mathematics', '', '1', '3,4'),
+(3, 'Biology', '', '1', '4,6,7'),
+(4, 'Physics', '', '1', '8,9,10'),
+(5, 'Chemistry', '', '1', '12,13,14'),
+(6, 'History', '', '1', '16,17'),
+(7, 'Geography', '', '1', '19,20'),
+(8, 'Commerce', '', '0', ''),
+(9, 'Christian Religious Education', '', '0', ''),
+(10, 'Entrepreneurship Educ', '', '0', ''),
+(11, 'Fine Art', '', '0', ''),
+(12, 'Agric', '', '0', ''),
+(13, 'Luganda', '', '0', ''),
+(14, 'Lusoga', '', '0', ''),
+(15, 'Lunyakyitara', '', '0', ''),
+(16, 'Swahilli', '', '0', ''),
+(17, 'French', '', '0', ''),
+(18, 'Arabic', '', '0', ''),
+(19, 'Litereature', '', '0', ''),
+(20, 'Islamic Religious Education', '', '0', ''),
+(21, 'Computer Studies', '', '0', ''),
+(22, 'Accounts', '', '0', ''),
+(23, 'Clothing\'s and Textiles', '', '0', ''),
+(24, 'Food and Nutrition', '', '0', ''),
+(25, 'Lugunbara T', '', '0', '');
 
 -- --------------------------------------------------------
 
@@ -475,11 +545,11 @@ CREATE TABLE `schools` (
 --
 
 INSERT INTO `schools` (`id`, `name`, `no_of_students`, `district`, `center_no`) VALUES
-(20, 'Mita kawempe college', 55, 'kololo', '44545'),
+(20, 'Mita kawempe college ss', 55, 'kololo', '44545'),
 (25, 'Makerere college', 55, 'kololo', '44545'),
 (26, 'Kololo high school', 55, 'kololo', '44545'),
 (27, 'Awayita omu', 55, 'kololo', '44545'),
-(28, 'Bat vallry', 55, 'kololo', '44545'),
+(28, 'Bat valley', 55, 'kololo', '44545'),
 (29, 'Kaboja', 55, 'kololo', '44545'),
 (30, 'Kitante Hill School', 78, 'kampala', '566/44');
 
@@ -500,7 +570,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `user_name`, `password`) VALUES
-(1, 'admin', 'admin123');
+(1, 'admin', '\r/B$CÕI¢Ü–*ÇVA'),
+(4, 'judith', '_²õÔüW¡<}nMÜãä'),
+(6, 'test', 'MÁ\0Ã\'Œ¡À›²-‡'),
+(7, 'juliana', 'MÁ\0Ã\'Œ¡À›²-‡');
 
 -- --------------------------------------------------------
 
@@ -515,8 +588,33 @@ CREATE TABLE `user_permissions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
+-- Dumping data for table `user_permissions`
+--
+
+INSERT INTO `user_permissions` (`id`, `user_id`, `perm_id`) VALUES
+(50, 1, 1),
+(51, 1, 2),
+(52, 1, 3),
+(53, 1, 4),
+(54, 1, 5),
+(56, 6, 1),
+(57, 7, 2),
+(58, 7, 3),
+(62, 4, 1),
+(63, 4, 2),
+(64, 4, 3),
+(65, 4, 4),
+(66, 4, 5);
+
+--
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `A_level_combiantions`
+--
+ALTER TABLE `A_level_combiantions`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `A_level_students`
@@ -603,15 +701,20 @@ ALTER TABLE `user_permissions`
 --
 
 --
+-- AUTO_INCREMENT for table `A_level_combiantions`
+--
+ALTER TABLE `A_level_combiantions`
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+--
 -- AUTO_INCREMENT for table `A_level_students`
 --
 ALTER TABLE `A_level_students`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT for table `A_level_student_marks`
 --
 ALTER TABLE `A_level_student_marks`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 --
 -- AUTO_INCREMENT for table `A_level_subejcts`
 --
@@ -626,12 +729,12 @@ ALTER TABLE `A_level_subejcts_papers`
 -- AUTO_INCREMENT for table `o_level_students`
 --
 ALTER TABLE `o_level_students`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
 -- AUTO_INCREMENT for table `o_level_student_marks`
 --
 ALTER TABLE `o_level_student_marks`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
 --
 -- AUTO_INCREMENT for table `o_level_subejcts`
 --
@@ -656,12 +759,12 @@ ALTER TABLE `schools`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `user_permissions`
 --
 ALTER TABLE `user_permissions`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 --
 -- Constraints for dumped tables
 --

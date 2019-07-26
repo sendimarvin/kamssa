@@ -160,16 +160,18 @@ class OLevelStudentReport {
         $grade = 'X';
         if ($this->is_missing_core) {
             return 'X';
-        }elseif ($this->aggregates >= 9 && $this->aggregates <= 32) {
+        }elseif ($this->aggregates >= 8 && $this->aggregates <= 32) {
             return 1;
-        } elseif ($this->aggregates >= 33 && $this->aggregates <= 45) {
+        } elseif ($this->aggregates > 32 && $this->aggregates <= 45) {
             return 2;
-        } elseif ($this->aggregates >= 46 && $this->aggregates <= 55) {
+        } elseif ($this->aggregates > 45 && $this->aggregates <= 58) {
             return 3;
-        } elseif ($this->aggregates >= 56 && $this->aggregates <= 65) {
+        } elseif ($this->aggregates > 58 && $this->aggregates <= 68) {
+            return 4;
+        } elseif ($this->aggregates > 68 && $this->aggregates <= 72) {
             return 4;
         } else {
-            return 5;
+            return "U";
         }
     }
 }
@@ -241,12 +243,11 @@ $studet_ids = explode(',', $student_id_collection);
                     <th>District</th>
                     <td><span><?=$school_details->district?></span>  </td>
 
+                    <th>Center No:</th>
+                    <td><span><?=$school_details->center_no?></span>  </td>
+
                 </tr>
             </table>
-
-            <div style="text-align:center; margin:7px;">
-                <span>Center No: <?=$school_details->center_no?> </span>
-            </div>
 
 
             <div style="text-align:center;">

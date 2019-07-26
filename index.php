@@ -333,7 +333,7 @@ input[type=text]:placeholder {
     <!-- Login Form -->
     <form action="Includes/authenticate_login.php" method = "POST">
       <input type="text" id="user_name" class="fadeIn second" name="user_name" placeholder="User name">
-      <input type="password" id="password" class="fadeIn third" name="password" >
+      <input type="password" id="password" class="fadeIn third" name="password" placeholder="Password">
       <input type="submit" class="fadeIn fourth" name="submit" value="Login">
     </form>
 

@@ -22,9 +22,12 @@ if (isset($_POST['submit'])) { //means form data
     $conn = $db_conn->conn;
 
 
-    $sql = " SELECT * FROM `users` WHERE 1";
+    $sql = " SELECT * FROM `users` WHERE `user_name` = :user_name AND `password` = AES_ENCRYPT(:password, 'kamssa') ";
     $stmt = $conn->prepare($sql);
-    $stmt->execute();
+    $stmt->execute([
+        ":user_name" => $user_name,
+        ":password" => $password
+    ]);
 
     
 
@@ -33,16 +36,27 @@ if (isset($_POST['submit'])) { //means form data
 
     $user_found = false;
     foreach ($result as $row) {
-        if ( ($row->user_name == $user_name) && ($row->password == $password) ) { //user fund
+        $user_found = true;
+        $_SESSION['username'] = $user_name;
 
-            $user_found = true;
-            //set session data
-            $_SESSION['username'] = $user_name;
+        // set user permissions
+        $stmt2 = $conn->query("SELECT *, 
+        IF((SELECT COUNT(*) FROM user_permissions WHERE user_permissions.perm_id = `permissions`.id AND `user_id` = {$row->id} ) > 0 , 1, 0) AS access
+        FROM `permissions` 
+        WHERE 1");
+        
 
-        } else {
-            //continue searching
-            continue;
+        foreach ($stmt2->fetchAll(PDO::FETCH_OBJ) as $key => $value) {
+            if ($value->access <> 1) {
+                $_SESSION[$value->name] = false;
+            } else {
+                $_SESSION[$value->name] = true;
+            }
         }
+
+
+
+
     }
 
 
