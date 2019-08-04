@@ -9,7 +9,7 @@ class DatabaseConnection {
     private $servername = "localhost";
     private $username = "root";
     private $db_name = "kamssa";
-    private $password = "Aurora1!";
+    private $password = "";
 
     // production parameters
     // private $servername = "localhost";

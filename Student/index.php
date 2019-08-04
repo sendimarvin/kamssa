@@ -6,8 +6,6 @@
         session_start();
     }
 
-    // print_r($_SESSION);
-    // die;
 
 ?>
 
@@ -19,7 +17,7 @@
     <title>KAMSSA</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel = "icon" type = "../image/png" href = "../Images/logo.jpeg	">
+    <link rel = "icon" type = "../image/png" href = "../Images/logo.jpeg ">
     <link rel="stylesheet" type="text/css" href="../Js/jquery-easyui-1.6.4/themes/default/easyui.css">
     <link rel="stylesheet" type="text/css" href="../Js/jquery-easyui-1.6.4/themes/icon.css">
     <link rel="stylesheet" type="text/css" href="../Js/jquery-easyui-1.6.4/demo/demo.css">
@@ -319,6 +317,32 @@
                                 </div>
                             </div>
                             <!-- end section for generating Alevel report -->
+
+                            <!-- begin section analysed report -->
+                            <div title="Analysed report" style="padding:5px">
+
+                            <div class="easyui-panel" style="width:400px; height:'auto'">
+                            <table>
+                                <tr>
+                                    <td>School</td>
+                                    <td><input type="text" id="analysed-report-school"></td>
+                                </tr>
+                                <tr>
+                                    <td>Level</td>
+                                    <td><input type="text" id="analysed-report-level"></td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td>
+                                        <a href="javascript:undefined" class="easyui-linkbutton" onClick="javascript:printAnalysedReport()" data-options="iconCls:'icon-print'">Print</a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            </div>
+
+                            </div>
+                            <!-- end section analysed report -->
                         </div>
                         
 
@@ -891,6 +915,30 @@
         
     </div>
     <script>
+
+        const printAnalysedReport = () => {
+            let school_id = $('#analysed-report-school').combobox('getValue');
+            let level = $('#analysed-report-level').combobox('getValue');
+
+            if (!school_id) {
+                return showMessager('Info', 'Plaese select a school');
+            }
+
+            if (!level) {
+                return showMessager('Info', 'Plaese select a level');
+            }
+
+
+            var window_status = window.open('print_analysed_report.php?school_id='+ school_id + '&level=' + level, 'Student Printout', 'top:0px;left:0px;width:400px;' );
+
+            if (!window_status) {
+                showMessager('Info', 'Please Disable your pop-up blocker to pritnt the report');
+            }
+
+
+
+        }
+
         function openAddSchoolDlg ()
         {
             $('#update-school-form').form('clear');
@@ -1633,6 +1681,26 @@
 
     <script>
         $(function () {
+
+
+            $('#analysed-report-level').combobox({
+                panelHeight: 'auto',
+                data: [
+                    {
+                        name: 'O-level',
+                        value: 'O-level'
+                    },
+                    {
+                        name: 'A-level',
+                        value: 'A-level'
+                    }
+                ],
+                valueField: 'value',
+                textField: 'name',
+                width: 100,
+                editable:false
+            });
+
             $('#update-school-form, #o_level_student_subject-form, #update-o_level-form, #update-A_level-form ').form({
                 url: ""
             });
@@ -1681,17 +1749,21 @@
 
             $.getJSON("update_school.php?get_all_schools_combo", {}, function (data) {
 
-                $('#o_level_school_name').combobox({
+                $('#o_level_school_name, #analysed-report-school').combobox({
                     data: data,
                     width: 300,
                     panelHeight: 100,
                     valueField: "id",
                     textField: "name",
-                    editable: false,
+                    editable: true
+                });
+
+                $('#o_level_school_name').combobox({
                     onSelect: function (row) {
                     $('#o_level_center_no').val(row.center_no); 
                     }
                 });
+
 
                 $('#o-level-school-search').combobox({
                     data: data,
@@ -1699,7 +1771,7 @@
                     panelHeight: 100,
                     valueField: "id",
                     textField: "name",
-                    editable: false,
+                    editable: true,
                     onSelect: function (row) {
                         searchOLevelSchool();
                     }
@@ -1710,7 +1782,7 @@
                     panelHeight: 100,
                     valueField: "id",
                     textField: "name",
-                    editable: false,
+                    editable: true,
                     onSelect: function (row) {
                         searchALevelSchool();
                     }
@@ -1722,7 +1794,7 @@
                     panelHeight: 100,
                     valueField: "id",
                     textField: "name",
-                    editable: false,
+                    editable: true,
                     onSelect: function (row) {
                         searchOLevelSchoolMarks();
                     }
@@ -1734,7 +1806,7 @@
                     panelHeight: 100,
                     valueField: "id",
                     textField: "name",
-                    editable: false,
+                    editable: true,
                     onSelect: function (row) {
                         searchALevelSchoolMarks();
                     }
@@ -1746,7 +1818,7 @@
                     panelHeight: 100,
                     valueField: "id",
                     textField: "name",
-                    editable: false,
+                    editable: true,
                     onSelect: function (row) {
                         searchOLevelSchoolPrint();
                     }
@@ -1758,7 +1830,7 @@
                     panelHeight: 100,
                     valueField: "id",
                     textField: "name",
-                    editable: false,
+                    editable: true,
                     onSelect: function (row) {
                         searchALevelSchoolPrint();
                     }
@@ -1773,7 +1845,7 @@
                 url: "update_school.php?get_all_schools_combo",
                 valueField: "id",
                 textField: "name",
-                editable: false,
+                editable: true,
                 onSelect: function (row) {
                    $('#A_level_center_no').val(row.center_no); 
                 }
@@ -1785,7 +1857,7 @@
                 url: "update_school.php?get_all_o_level_subejcts_combo",
                 valueField: "id",
                 textField: "name",
-                editable: false,
+                editable: true,
                 onSelect: function (row) {
 
                     $('#student_subject_papers').combogrid({
@@ -1802,7 +1874,7 @@
                 url: "update_school.php?get_all_A_level_subejcts_combo",
                 valueField: "id",
                 textField: "name",
-                editable: false,
+                editable: true,
                 onSelect: function (row) {
 
                     $('#student_subject_papers_Alevel').combogrid({

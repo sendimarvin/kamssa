@@ -306,7 +306,7 @@ $studet_ids = explode(',', $student_id_collection);
 
             <div style="text-align:center;">
                 <span style="font-weight:bold" class="report-text">COMBINATION <?= $ALevelStudentReport->getStudentCombination()?></span>
-                <table style="margin-left:auto; margin-right:auto;">
+                <table style="margin-left:auto; margin-right:auto;  background-image:url('../Images/watermark.png'); background-repeat:no-repeat; background-size: cover; background-position: center;">
                     <thead>
                         <tr>
                             <th style="text-align:left; width:40px;">No&nbsp;</th>
