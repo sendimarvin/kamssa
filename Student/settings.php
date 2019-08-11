@@ -1,3 +1,10 @@
+
+<?php
+
+    if (!isset($_SESSION))
+        session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,8 +27,6 @@
             background-repeat: no-repeat, repeat;
             background-color: #ccc;
         }
-
-
 
         #menu-navbar {
             list-style-type: none;
@@ -71,6 +76,39 @@
             color: red;
             text-decoration: underline;
         }
+
+        #menu-btn {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 10px;
+        }
+
+        #menu-tems-section {
+            display: none;
+        }
+
+        [menu-section2] {
+            background-color: #e7e7e7;
+        }
+
+        .menu-items > li{
+            text-decoration: none;
+            list-style: none;
+        }
+
+        .menu-items > li > a {
+            text-decoration: none;
+        }
+
+        .menu-items > li > a:hover {
+            text-decoration: underline;
+        }
     </style>
 
 </head>
@@ -85,54 +123,42 @@
             <!-- <li><a href="#news">News</a></li> -->
             <li><a href="#contact">Settings</a></li>
 
-            <li id="logout-text-section"><a href="../index.php?logout"><span id="logout-text">Logout</span></a></li>
+            <span id="logout-text-section">
+                <span>Logged in as <?= $_SESSION['username']?></span>    
+                <li >
+                    <a href="../index.php?logout"><span id="logout-text">Logout</span></a>
+                </li>
+            </span>
+            
         </ul>
 
-        <div class="easyui-layout" style="width:auto;height:600px;">
-            <div data-options="region:'center',title:'KAMSSA'">
-                <div class="easyui-tabs" data-options="fit:true,border:false,plain:true">
-
-                    <!-- begin section for schools -->
-                    <div title="Users"style="padding:10px">
-
-                        <table id="users-dg" class="easyui-datagrid" title="Users Profile" style="width:1170px;height:500px"
-                            data-options="singleSelect:true,collapsible:true,method:'get', pagination:'true', url:'update_settings.php?get_all_users', fitcolumns:false" toolbar="#settings-dg-toolbar">
-                            <thead>
-                                <tr>
-                                    <th data-options="field:'id',width:80">No</th>
-                                    <th data-options="field:'user_name',width:300">User name</th>
-                                    <th data-options="field:'user_permission_names',width:600,align:'center'">Access</th>
-                                    <th data-options="field:'action',width:180,align:'center'" formatter= "userActionFormtter">Action</th>
-                                </tr>
-                            </thead>
-                        </table>
-
-                        <div id="settings-dg-toolbar">
-                            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onClick="openAddUserDlg()">Add</a>
-                            <input type="text" id="user-section-general-search" placeholder="Search..." style="width:300px;height:20px;">
-                        </div>
-                
-                    </div>
-                    <!-- End section for schools -->
-
-                    <!-- Begin Students Section -->
-                    <div title="Students" style="padding:5px">
-
-                    </div>
-                    <!-- End Students Section -->
-
-                    <div title="Results" style="padding:5px">
-                        
-                    </div>
-
-
-                    <div title="Reports" style="padding:5px">
-
-
-                    </div>
-                </div>
-            </div>
+        <div menu-section2>
+            <button id="menu-btn" onClick="$('#menu-tems-section').toggle();">Menu</button>
+            <!-- begin section menu items -->
+            <?php
+                require_once '../Includes/menu_items.php';
+            ?>
+            <!-- End section menu items -->
         </div>
+
+        <!-- begin section for schools -->
+        <table id="users-dg" class="easyui-datagrid" title="Users Profile" style="width:1170px;height:500px"
+            data-options="singleSelect:true,collapsible:true,method:'get', pagination:'true', url:'update_settings.php?get_all_users', fitcolumns:false" toolbar="#settings-dg-toolbar">
+            <thead>
+                <tr>
+                    <th data-options="field:'id',width:80">No</th>
+                    <th data-options="field:'user_name',width:300">User name</th>
+                    <th data-options="field:'user_permission_names',width:600,align:'center'">Access</th>
+                    <th data-options="field:'action',width:180,align:'center'" formatter= "userActionFormtter">Action</th>
+                </tr>
+            </thead>
+        </table>
+
+        <div id="settings-dg-toolbar">
+            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onClick="openAddUserDlg()">Add</a>
+            <input type="text" id="user-section-general-search" placeholder="Search..." style="width:300px;height:20px;">
+        </div>
+        <!-- End section for schools -->
 
 
 

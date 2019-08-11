@@ -8,7 +8,144 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 
-if (isset($_GET['delete_user'])) {
+
+
+if (isset($_GET['add_o-level_subject'])) {
+
+
+    require '../Includes/Class/db_connect.php';
+    $db_conn = new DatabaseConnection ();
+    $conn = $db_conn->conn;
+
+    $subject_id = filter_input(INPUT_POST, 'subject_id', FILTER_VALIDATE_INT);
+    $subject_name = filter_input(INPUT_POST, 'subject_name', FILTER_SANITIZE_STRING);
+    $subject_code = filter_input(INPUT_POST, 'subject_code', FILTER_SANITIZE_STRING);
+    $no_of_papers_done = filter_input(INPUT_POST, 'no_of_papers_done', FILTER_VALIDATE_INT);
+    $subject_is_core = isset($_POST['subject_is_core']) ? 1 : 0;
+
+    $subject_id = $subject_id ? $subject_id : 0;
+
+
+    if ($subject_name && $subject_code && $no_of_papers_done) {
+        if ($subject_id > 0) { // means edit
+            $conn->exec("UPDATE `o_level_subejcts` SET `name`='$subject_name',`subject_code`='$subject_code',`is_core`='$subject_is_core',
+            `default_papers`='' WHERE `id`=$subject_id");
+        } else { // means new
+            $conn->exec("INSERT INTO `o_level_subejcts` SET `name`='$subject_name',`subject_code`='$subject_code',`is_core`='$subject_is_core',
+            `default_papers`='' ");
+            $subject_id = $conn->lastInsertId();
+        }
+
+        die (json_encode(
+            array(
+                'success' => true,
+                'msg' => "Update Successfull",
+                'id' => $subject_id
+            )
+        ));
+    } else {
+        die(json_encode(array('success'=>true,'msg'=>"Please supply all fields")));
+    }
+    
+
+} elseif (isset($_GET['get_all_o_level_subjects'])) {
+
+    require '../Includes/Class/db_connect.php';
+    $db_conn = new DatabaseConnection ();
+    $conn = $db_conn->conn;
+
+    $where = "";
+    if (isset($_GET['search'])) {
+        $search = $_GET['search'];
+        $where = " AND combination LIKE '%$search%' ";
+    }
+
+    $stmt = $conn->query("SELECT * FROM o_level_subejcts WHERE 1=1 ");
+
+    $results = array();
+
+    foreach ($stmt->fetchAll(PDO::FETCH_OBJ) as $key => $row) {
+
+        $row->subject_is_core = '';
+        if ($row->is_core) {
+            $row->subject_is_core = 'compulsory';
+        }
+
+        // get the papers in the subject
+        $stmt2 = $conn->query("SELECT IFNULL(GROUP_CONCAT(paper_code SEPARATOR ', '), '') AS subject_papers FROM o_level_subejcts_papers WHERE subject_id = $row->id ");
+        $row->subject_papers = $stmt2->fetchObject()->subject_papers;
+
+        // get the default papers in the subject
+        $default_papers_search = !empty($row->default_papers) ? $row->default_papers : -1;
+        $stmt2 = $conn->query("SELECT IFNULL(GROUP_CONCAT(paper_code SEPARATOR ', '), '') AS default_papers_search FROM o_level_subejcts_papers WHERE subject_id IN ($default_papers_search) ");
+        $row->subject_default_papers = $stmt2->fetchObject()->default_papers_search;
+
+
+
+        array_push($results, $row);
+    }
+
+    echo json_encode($results);
+
+
+
+} elseif (isset($_GET['delete_combination'])) {
+    require '../Includes/Class/db_connect.php';
+    $db_conn = new DatabaseConnection ();
+    $conn = $db_conn->conn;
+
+    $combination_id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+
+    // check if their are users on combination
+    $stmt = $conn->query("SELECT COUNT(*) AS availability FROM a_level_students WHERE combination_id = '$combination_id'");
+    $availability = $stmt->fetchObject()->availability;
+
+    if ($availability > 0) {
+        die(json_encode(array('success'=>false, 'msg'=>"The combination is assigned to $availability students")));
+    } else {
+        $conn->exec("DELETE FROM a_level_combinations WHERE id = $combination_id");
+        die(json_encode(array('success'=>true, 'msg'=>"Update successfull")));
+    }
+
+} elseIf (isset($_GET['save_combination'])) {
+    require '../Includes/Class/db_connect.php';
+    $db_conn = new DatabaseConnection ();
+    $conn = $db_conn->conn;
+
+    $combination_id = filter_input(INPUT_POST, 'combination_id', FILTER_VALIDATE_INT);
+    $combination_name = filter_input(INPUT_POST, 'combination_name', FILTER_SANITIZE_STRING);
+
+    if (!empty($combination_name)) {
+        if ($combination_id) { // edit combination instead
+            $conn->exec("UPDATE `a_level_combinations` SET `combination`='$combination_name' WHERE id = $combination_id");
+        } else { // add combination
+            $conn->exec("INSERT INTO `a_level_combinations` SET `combination`='$combination_name'");
+            $combination_id = $conn->lastInsertId();
+        }
+    }
+    
+
+    echo json_encode(array ('success' => true, 'msg' => "Update successfull", 'id' => $combination_id, 'combination_name' => $combination_name));
+
+
+} elseif (isset($_GET['get_all_A-level_combination'])) {
+    require '../Includes/Class/db_connect.php';
+    $db_conn = new DatabaseConnection ();
+    $conn = $db_conn->conn;
+
+    $where = "";
+    if (isset($_GET['search'])) {
+        $search = $_GET['search'];
+        $where = " AND combination LIKE '%$search%' ";
+    }
+
+    $stmt = $conn->query("SELECT * FROM a_level_combinations WHERE 1=1 $where ");
+
+    echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+
+
+
+} elseif (isset($_GET['delete_user'])) {
     require '../Includes/Class/db_connect.php';
     $db_conn = new DatabaseConnection ();
     $conn = $db_conn->conn;

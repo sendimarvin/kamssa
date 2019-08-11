@@ -43,8 +43,10 @@ class ALevelStudentReport {
 
     public function getStudenDetatils ()
     {
-        $sql = "SELECT STUDENTS.* 
+        $sql = "SELECT STUDENTS.*,
+            a_level_combinations.combination AS combination_name
             FROM A_level_students  AS STUDENTS
+            LEFT JOIN a_level_combinations ON a_level_combinations.id = STUDENTS.combination_id
             WHERE  STUDENTS.id = {$this->student_id} ";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
@@ -161,69 +163,8 @@ class ALevelStudentReport {
 
         
         return $results;
-    }
+    }  
 
-    /**
-     * Get the combination from a student subject
-     * @param object => student marks
-     * @return string combination
-     */
-    public function getStudentCombination ()
-    {
-        // kill the object reference
-        $subjects = json_decode(json_encode($this->results_temp));
-
-        $found_subjects = [];
-        foreach ($subjects as $key => $subject_data) {
-            if (intVal($subject_data->is_core) != 2) {
-                if (intVal($subject_data->is_core) == 0) {
-                    $subject_data->name = substr($subject_data->name, 0, 1);
-                }
-                $found_subjects[$subject_data->name] = intVal($subject_data->is_core); 
-            }
-               
-        }
-
-        arsort($found_subjects);
-        $found_subjects = array_reverse($found_subjects);
-        $found_subjects = array_keys($found_subjects);
-
-
-        if (count($found_subjects) <> 4) {
-            return "N/A";
-        }
-
-        return $this->getProperCombiation($found_subjects);
-
-    }   
-
-    private function getProperCombiation ($subjects)
-    {
-        $paper_codes = $subjects[0] . $subjects[1] . $subjects[2]; // i.e PCM / ICT
-        $paper_codes = str_split(strtoupper($paper_codes));
-        sort($paper_codes);
-        $paper_codes = implode("", $paper_codes);
-
-
-        $stmt = $this->conn->query("SELECT combination, (SELECT combination) AS combination2 FROM   A_level_combiantions WHERE 1=1");
-
-        foreach ($stmt->fetchAll(PDO::FETCH_OBJ) as $key => $combination_values) {
-            
-            // check for combination match
-            $first_part = str_split(strtoupper(trim(explode("/", $combination_values->combination)[0])));
-            sort($first_part);
-            $first_part = implode("", $first_part);
-
-            $fist_part2 = strtoupper(trim(explode("/", $combination_values->combination)[0]));
-            
-            if ( $paper_codes ==  $first_part ) {
-                return $fist_part2 . " / " .  $subjects[3];
-            }
-        }
-
-        return "N/A";
-
-    }
 }
 
 $student_id_collection = $_GET['student_ids'];
@@ -305,7 +246,7 @@ $studet_ids = explode(',', $student_id_collection);
 
 
             <div style="text-align:center;">
-                <span style="font-weight:bold" class="report-text">COMBINATION <?= $ALevelStudentReport->getStudentCombination()?></span>
+                <span style="font-weight:bold" class="report-text">COMBINATION <?= $student_details->combination_name?></span>
                 <table style="margin-left:auto; margin-right:auto;  background-image:url('../Images/watermark.png'); background-repeat:no-repeat; background-size: cover; background-position: center;">
                     <thead>
                         <tr>

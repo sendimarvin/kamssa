@@ -176,14 +176,15 @@ if (isset($_GET['delete_A_level_student'])) {
     $first_name = filter_var($_POST['A_level_first_name'], FILTER_SANITIZE_STRING);
     $second_name = filter_var($_POST['A_level_second_name'], FILTER_SANITIZE_STRING);
     $index_no = filter_var($_POST['A_level_index_no'], FILTER_SANITIZE_STRING);
+    $combination_id = filter_var($_POST['A_level_combination'], FILTER_VALIDATE_INT);
 
 
     $sql = "";
     if ($id > 0) {
-        $sql = "UPDATE  A_level_students SET school_id = $school_id, first_name = '$first_name', second_name = '$second_name', index_no = '$index_no' WHERE id = $id ";
+        $sql = "UPDATE  A_level_students SET school_id = $school_id, first_name = '$first_name', second_name = '$second_name', index_no = '$index_no', combination_id = $combination_id WHERE id = $id ";
         $conn->exec($sql);
     } else {
-        $sql = "INSERT INTO  A_level_students SET school_id = $school_id, first_name = '$first_name', second_name = '$second_name', index_no = '$index_no'";
+        $sql = "INSERT INTO  A_level_students SET school_id = $school_id, first_name = '$first_name', second_name = '$second_name', index_no = '$index_no', combination_id = $combination_id";
         $conn->exec($sql);
         $id = $conn->lastInsertId();
 
@@ -244,7 +245,7 @@ if (isset($_GET['delete_A_level_student'])) {
         $where = " AND schools.id = '{$school_id}' ";
     } 
     if ($extra_search) {
-        $where .= " AND (`first_name` LIKE '%$extra_search%' OR `second_name` LIKE '%$extra_search%' OR `index_no` LIKE '%$extra_search%' )  "; 
+        $where .= " AND (`first_name` LIKE '%$extra_search%' OR `second_name` LIKE '%$extra_search%' OR `index_no` LIKE '%$extra_search%'  )  "; 
     }
 
     $offset = ($page - 1) * $rows;
@@ -265,9 +266,11 @@ if (isset($_GET['delete_A_level_student'])) {
     // (SELECT `center_no` FROM `schools` WHERE schools.id = A_level_students.school_id ) AS center_no
     // FROM A_level_students WHERE $where ";
 
-    $sql = "SELECT A_level_students.*, schools.name as school_name, schools.center_no
+    $sql = "SELECT A_level_students.*, schools.name as school_name, schools.center_no,
+    a_level_combinations.combination AS combination_name
     FROM A_level_students
     LEFT JOIN schools ON schools.id = A_level_students.school_id
+    LEFT JOIN a_level_combinations ON a_level_combinations.id = A_level_students.combination_id
     WHERE 1 $where  LIMIT $offset, $rows";
 
     $stmt = $conn->prepare($sql);

@@ -162,6 +162,11 @@
                                     <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onClick="openAddOLevelStudentDlg()">Add</a>
                                     <input type="text" id="o-level-school-search" >&nbsp;&nbsp;&nbsp;
                                     <input type="text" id="o-level-general-search" placeholder="search center no, index no and name" style="width:300px;height:20px;">
+                                    <a href="javascript:undefined" class="easyui-linkbutton" onClick="
+                                        $('#o-level-school-search').combobox('setValue', '');
+                                        $('#o-level-general-search').val('');
+                                        searchOLevelSchool();
+                                    ">Show All</a>
                                 </div>
 
                             </div>
@@ -174,11 +179,12 @@
                                     <thead>
                                         <tr>
                                             <th data-options="field:'id',width:80, hidden:true">No</th>
-                                            <th data-options="field:'school_name',width:250">School</th>
+                                            <th data-options="field:'school_name',width:200">School</th>
                                             <th data-options="field:'center_no',width:100">Center No</th>
                                             <th data-options="field:'index_no',width:200">Index No.</th>
                                             <th data-options="field:'first_name',width:200">First Name</th>
                                             <th data-options="field:'second_name',width:200">Second Name</th>
+                                            <th data-options="field:'combination_name',width:100">Combination Name</th>
                                             <th data-options="field:'action',width:120,align:'center'" formatter= "ALevelStudentActionFormtter">Action</th>
                                         </tr>
                                     </thead>
@@ -188,6 +194,11 @@
                                     <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onClick="openAddALevelStudentDlg()">Add</a>
                                     <input type="text" id="A-level-school-search" >&nbsp;&nbsp;&nbsp;
                                     <input type="text" id="A-level-general-search" placeholder="search center no, index no and name" style="width:300px;height:20px;">
+                                    <a href="javascript:undefined" class="easyui-linkbutton" onClick="
+                                        $('#A-level-school-search').combobox('setValue', '');
+                                        $('#A-level-general-search').val('');
+                                        searchALevelSchool();
+                                    ">Show All</a>
                                 </div>
                             </div>
                             <!-- end tab section for update A-lvel student information -->
@@ -224,6 +235,11 @@
                                 <div id="olevel-students-marks-dg-toolbar">
                                     <input type="text" id="o-level-school-marks-search" >&nbsp;&nbsp;&nbsp;
                                     <input type="text" id="o-level-marks-general-search" placeholder="search index no and name" style="width:300px;height:20px;">
+                                    <a href="javascript:undefined" class="easyui-linkbutton" onClick="
+                                        $('#o-level-school-marks-search').combobox('setValue', '');
+                                        $('#o-level-marks-general-search').val('');
+                                        searchOLevelSchoolMarks();
+                                    ">Show All</a>
                                 </div>
 
 
@@ -251,6 +267,11 @@
                                 <div id="Alevel-students-marks-dg-toolbar">
                                     <input type="text" id="A-level-school-marks-search" >&nbsp;&nbsp;&nbsp;
                                     <input type="text" id="A-level-marks-general-search" placeholder="search index no and name" style="width:300px;height:20px;">
+                                    <a href="javascript:undefined" class="easyui-linkbutton" onClick="
+                                        $('#A-level-school-marks-search').combobox('setValue', '');
+                                        $('#A-level-marks-general-search').val('');
+                                        searchALevelSchoolMarks();
+                                    ">Show All</a>
                                 </div>
 
                             </div>
@@ -288,6 +309,11 @@
                                     <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-print'" onClick="printOLevelStudentReport()">Print Report</a>
                                     <input type="text" id="o-level-school-print-search" >&nbsp;&nbsp;&nbsp;
                                     <input type="text" id="o-level-print-general-search" placeholder="search index no and name" style="width:300px;height:20px;">
+                                    <a href="javascript:undefined" class="easyui-linkbutton" onClick="
+                                        $('#o-level-school-print-search').combobox('setValue', '');
+                                        $('#o-level-print-general-search').val('');
+                                        searchOLevelSchoolPrint();
+                                    ">Show All</a>
                                 </div> 
 
                             </div>
@@ -314,6 +340,11 @@
                                     <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-print'" onClick="printALevelStudentReport()">Print Report</a>
                                     <input type="text" id="A-level-school-print-search" >&nbsp;&nbsp;&nbsp;
                                     <input type="text" id="A-level-print-general-search" placeholder="search index no and name" style="width:300px;height:20px;">
+                                    <a href="javascript:undefined" class="easyui-linkbutton" onClick="
+                                        $('#A-level-school-print-search').combobox('setValue', '');
+                                        $('#A-level-print-general-search').val('');
+                                        searchALevelSchoolPrint();
+                                    ">Show All</a>
                                 </div>
                             </div>
                             <!-- end section for generating Alevel report -->
@@ -540,6 +571,16 @@
                         <td>Index no</td>
                         <td>
                             <input class="easyui-validatebox" type="text" id="A_level_index_no" name="A_level_index_no" style="width:300px;" required>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Combiantion</td>
+                        <td>
+                            <input class="easyui-combobox" type="text" id="A_level_combination" name="A_level_combination" style="width:300px;" 
+                                data-options="url:'update_settings.php?get_all_A-level_combination',
+                                valueField:'id', textField:'combination', editable:false"
+                            required>
                         </td>
                     </tr>
 
@@ -1130,7 +1171,7 @@
         function ALevelStudentActionFormtter (value, row, index)
         {
             if (row.id) {
-                return '<input type="button" value="edit" onClick="openEditALevelStudentDlg()">'
+                return '<input type="button" value="edit" onClick="openEditALevelStudentDlg('+index+')">'
                 +' <input type="button" value="delete" onClick="deleteALevelStudent('+row.id+')">';
             }
         }
@@ -1296,30 +1337,32 @@
             
         }
 
-        function openEditALevelStudentDlg ()
+        function openEditALevelStudentDlg (index)
         {
-            setTimeout(() => {
-                let row = $('#Alevel-students-dg').datagrid('getSelected');
-                if (row) {
-                    $('#A_level_student_id').val(row.id);
-                    $('#A_level_school_name').combobox("setValue", row.school_id);
-                    $('#A_level_center_no').val(row.center_no);
-                    $('#A_level_first_name').val(row.first_name);
-                    $('#A_level_second_name').val(row.second_name);
-                    $('#A_level_index_no').val(row.index_no);
-                    $('#A_level-dlg').dialog('setTitle', 'Edit A-level Student').dialog('open'); 
+            // select the index first
+            $('#Alevel-students-dg').datagrid('selectRow', index);
+            let row = $('#Alevel-students-dg').datagrid('getSelected');
+            if (row) {
+                $('#update-A_level-form').form('clear');
+                $('#A_level_student_id').val(row.id);
+                $('#A_level_school_name').combobox("setValue", row.school_id);
+                $('#A_level_center_no').val(row.center_no);
+                $('#A_level_first_name').val(row.first_name);
+                $('#A_level_second_name').val(row.second_name);
+                $('#A_level_index_no').val(row.index_no);
+                if (row.combination_id > 0)
+                    $('#A_level_combination').combobox("setValue", row.combination_id);
+                $('#A_level-dlg').dialog('setTitle', 'Edit A-level Student').dialog('open'); 
 
 
-                    //load student results from here
-                    $('#Alevel-student-subjects-dg').datagrid({
-                        url: 'update_school.php?get_student_subject_papers_Alevel&student_id='+ row.id
-                    });
+                //load student results from here
+                $('#Alevel-student-subjects-dg').datagrid({
+                    url: 'update_school.php?get_student_subject_papers_Alevel&student_id='+ row.id
+                });
 
-                } else {
-                    showMessager('Warning', 'Please Select Student to edit');
-                }
-                  
-            }, 500);
+            } else {
+                showMessager('Warning', 'Please Select Student to edit');
+            }
             
         }
 
