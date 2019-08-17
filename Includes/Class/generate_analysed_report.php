@@ -149,9 +149,6 @@ class GenerateAnalysedReport {
 
         if ($subjects_done < 8) return array('aggregates' => 'X', 'grade' => 'U');
 
-
-
-
         $best_agg = $this->getBestDone8 ($subject_details_new);
 
         $grade = $this->getGrade($best_agg, $subject_details_new);

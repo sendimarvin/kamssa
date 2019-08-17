@@ -55,7 +55,7 @@ class OLevelStudentReport {
     public function getStudentSubjectMarks ()
     {
         //get subjects for student
-        $sql = "SELECT SUBJECTS.id, SUBJECTS.name, AVG(MARKS.marks) AS average_score, PAPERS.subject_id, SUBJECTS.is_core
+        $sql = "SELECT SUBJECTS.id, SUBJECTS.name, IF((MIN(MARKS.marks) = -1 OR SUBJECTS.no_of_papers_done <> COUNT(MARKS.marks)), 'X', AVG(MARKS.marks) ) AS average_score, PAPERS.subject_id, SUBJECTS.is_core
             FROM `o_level_student_marks` AS MARKS
             JOIN o_level_subejcts_papers AS PAPERS ON PAPERS.id = MARKS.subject_paper_id
             JOIN o_level_subejcts AS SUBJECTS ON SUBJECTS.id = PAPERS.subject_id
@@ -68,13 +68,15 @@ class OLevelStudentReport {
         $data = [];
         $aggregates =  0;
         $found_subject_ids = [];
-        $found_optional_grades = [];
         foreach ($results as $subject) {
             //grade student from here
             $found_subject_ids[] = $subject->id;
 
             $subject_aggregate = 0;
-            if ($subject->average_score >= 80) {
+            if (($subject->average_score == 'X')) {
+                $subject_aggregate = 'X';
+                $subject->grade = 'X';
+            } elseif ($subject->average_score >= 80) {
                 $subject_aggregate = 1;
                 $subject->grade = 'D1';
             } elseif ($subject->average_score >= 75) {
@@ -102,27 +104,12 @@ class OLevelStudentReport {
                 $subject_aggregate = 9;
                 $subject->grade = 'F9';
             }
+            $subject->subject_aggregate = $subject_aggregate;
 
-            // only add core subjects to aggregate at the moment
-            if (intVal($subject->is_core) === 1) {
-                $aggregates += $subject_aggregate;
-            } else {
-                $found_optional_grades[] = $subject_aggregate;
-            }
-
-            
             $data[] = $subject;
         }
 
-        $best_in_optional = 10;
-        foreach ( $found_optional_grades as $key => $value) {
-            if ($value < $best_in_optional) {
-                $best_in_optional = $value;
-            }
-        }
-
-        // add best optional to aggregate to get the bet 8 done sbubject
-        $aggregates += $best_in_optional;
+        $aggregates = $this->getBestDone8($data);
 
         $this->aggregates = $aggregates;
 
@@ -134,6 +121,41 @@ class OLevelStudentReport {
         }
 
         return array_merge($missing_subjects, $results );
+    }
+
+
+    public function getBestDone8 ($subjects_details)
+    {
+        $new_results = []; // max initial size is 8
+
+        foreach ($subjects_details as $key => $subjects_detail) {
+            if ($subjects_detail->grade == 'X')
+                    continue;
+
+            if (count($new_results) < 8) {
+                $new_results[] = $subjects_detail;
+                continue;
+            } else { // means stack is already ull with 8
+
+                // check if new subjuect is lower than some that exists
+                foreach ($new_results as $key2 => $new_result) {
+                    if ($new_result->subject_aggregate > $subjects_detail->subject_aggregate) {
+                        // shift paper and break
+                        $new_result[$key2] = $subjects_detail;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // grade best 8 done
+        $best_done_agg = 0;
+        foreach ($new_results as $key => $new_result) {
+            $best_done_agg += $new_result->subject_aggregate;
+        }
+
+        return $best_done_agg;
+
     }
 
     /**
