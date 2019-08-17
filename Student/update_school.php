@@ -188,6 +188,7 @@ if (isset($_GET['delete_A_level_student'])) {
         $conn->exec($sql);
         $id = $conn->lastInsertId();
 
+
         // assin general papaper to student
         $student_id = $id;
         $subject_id = "1";
@@ -219,8 +220,8 @@ if (isset($_GET['delete_A_level_student'])) {
             $counts = $stmt->fetchObject()->counts;
 
             if ($counts == 0) { //add the paper to the student
-                $sql = "INSERT INTO A_level_student_marks (`subject_paper_id`, `student_id`)
-                VALUES ('$paper_code_id', '$student_id')";
+                $sql = "INSERT INTO A_level_student_marks (`subject_paper_id`, `marks`, `student_id`)
+                VALUES ('$paper_code_id', -1,  '$student_id')";
                 $conn->exec($sql);
             }
 
@@ -692,42 +693,23 @@ if (isset($_GET['delete_A_level_student'])) {
 function addOLevelCompulsorySubjects ($conn, $student_id)
 {
     // get all o-level compulsory subjects from system
-    $stmtx = $conn->query("SELECT * FROM  o_level_subejcts WHERE is_core = '1' AND default_papers <> ''");
+    $stmtx = $conn->query("SELECT * FROM  o_level_subejcts WHERE is_core = '1'");
 
-    foreach ($stmtx->fetchAll(PDO::FETCH_OBJ) as $index => $row ) {
-
+    foreach ($stmtx->fetchAll(PDO::FETCH_OBJ) as $index => $row )
+    {
         $subject_id = $row->id;
-        $subject_papers = $row->default_papers;
         //get all papers in subejct
-        $sql = "SELECT GROUP_CONCAT(id) AS papers_in_subject FROM o_level_subejcts_papers WHERE subject_id = $subject_id ";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $papers_in_subject = $stmt->fetchObject()->papers_in_subject;
-        $papers_in_subject = ($papers_in_subject == "") ? '-1' : $papers_in_subject;
+        $stmt = $conn->query("SELECT * FROM o_level_subejcts_papers WHERE subject_id = $subject_id AND is_default = '1' ");
 
-        //first delete all the papers that are not in the selection
-        $sql = "DELETE FROM o_level_student_marks WHERE student_id = '$student_id' AND (subject_paper_id NOT IN ($subject_papers)) AND subject_paper_id IN ($papers_in_subject) ";
-
-
-        
-        $conn->exec($sql);
-
-        $subject_papers = explode(',', $subject_papers);
-
-        foreach ($subject_papers as  $paper_code_id) {
-            
+        foreach ($stmt->fetchAll(PDO::FETCH_OBJ) as  $key2 => $subject_paper) 
+        {
             //check existance
-            $sql = "SELECT COUNT(*) AS counts FROM o_level_student_marks WHERE student_id = '$student_id' AND subject_paper_id = $paper_code_id ";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute();
-            $counts = $stmt->fetchObject()->counts;
+            $stmt = $conn->query("SELECT COUNT(*) AS counts FROM o_level_student_marks WHERE student_id = '$student_id' AND subject_paper_id = {$subject_paper->id} ");
 
-            if ($counts == 0) { //add the paper to the student
-                $sql = "INSERT INTO o_level_student_marks (`subject_paper_id`, `student_id`)
-                VALUES ('$paper_code_id', '$student_id')";
-                $conn->exec($sql);
+            if ($stmt->fetchObject()->counts == 0) { //add the paper to the student
+                $conn->exec( "INSERT INTO o_level_student_marks (`subject_paper_id`, `marks`, `student_id`)
+                VALUES ('{$subject_paper->id}', -1, '$student_id')");
             }
-
         }
 
 

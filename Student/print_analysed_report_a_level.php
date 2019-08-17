@@ -7,15 +7,16 @@
 
  require_once '../Includes/Class/generate_analysed_report.php';
 
+
  $school_id = $_GET['school_id'];
  $level = $_GET['level'];
 
 
- $analysed_report = new GenerateAnalysedReport($school_id, $level);
+ $analysed_report = new GenerateAnalysedReportALevel($school_id, $level);
 
- $subjects =  $analysed_report->getAllOLevelSubjects();
- $students =  $analysed_report->getAllOStudentsInSchool();
-
+ $subjects =  $analysed_report->getAllALevelSubjects();
+ $students =  $analysed_report->getAllAStudentsInSchool();
+ 
 
 ?>
 
@@ -30,6 +31,10 @@
     <style>
         .report-text {
             font-size: 14px;
+        }
+
+        .grade-table thead {
+            font-weight: bold;
         }
 
         .grade-table td {
@@ -86,13 +91,13 @@
                                 <td>No</td>
                                 <td>Name</td>
                                 <td>Index No</td>
+                                <td>Combination</td>
                                 <!-- begin generate subjects -->
                                 <?php foreach($subjects as $key => $subject):?>
                                 <td><?= $subject->name?></td>
                                 <?php endforeach;?>
                                 <!-- end generate subjects -->
-                                <td>Aggregates</td>
-                                <td>Grade</td>
+                                <td>Points</td>
                         </thead>    
                         <tbody>
                             <?php foreach($students as $key => $student):?>
@@ -103,12 +108,13 @@
                                 <td><?= ($key + 1)?></td>
                                 <td><?= $student->first_name . ' ' . $student->second_name?></td>
                                 <td><?= $student->index_no?></td>
+                                <td><?= $student->combination?></td>
                                 <!-- begin generate subjects -->
                                 <?php foreach($subjects as $key2 => $subject):?>
 
                                 <?php
                                     // paper grade details
-                                    $grade_details = $analysed_report->getScoreOnStudentOLevelMarks($student->id, $subject->id);
+                                    $grade_details = $analysed_report->getScoreOnStudentALevelMarks($student->id, $subject->id);
                                     $student_performance_records[] = $grade_details;
                                 ?>
                                 
@@ -116,12 +122,11 @@
                                 <?php endforeach;?>
                                 <?php
                                     // get grade and aggregates
-                                    $grade_detailsX = $analysed_report->getOLevelAggregatesAndGrade($student_performance_records);
+                                    $points = $analysed_report->getALevelPoints($student_performance_records);
 
                                 ?>
                                 <!-- end generate subjects -->
-                                <td><?= $grade_detailsX['aggregates']?></td>
-                                <td><?= $grade_detailsX['grade']?></td>
+                                <td><?=  $points?></td>
                             </tr>
                             <?php endforeach;?>
                         </tbody>

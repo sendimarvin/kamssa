@@ -214,7 +214,7 @@ $studet_ids = explode(',', $student_id_collection);
             $studentSubejcts = $OLevelStudentReport->getStudentSubjectMarks();
     ?>
         <!-- begin section for generaing students report -->
-        <section style="border:solid; padding: 10px; width: 800px; margin:auto;">
+        <section style="border:solid; padding: 10px; width: 800px; margin:auto; background-image:url('../Images/watermark.png'); background-repeat:no-repeat; background-size: cover; background-position: center;">
             <div style="text-align:center;">
 
             <table style="margin-left: 5%;">
@@ -232,7 +232,7 @@ $studet_ids = explode(',', $student_id_collection);
                 <h4 style="margin:0px;">MOCK PASSLIP</h4>
             </div>
 
-            <table style="margin-left:10%;">
+            <table style="margin-left:10%; ">
                 <tr>
                     <th>Student's Name</th>
                     <td><span><?=$student_details->second_name?> <?=$student_details->first_name?></span>  </td>
@@ -251,7 +251,7 @@ $studet_ids = explode(',', $student_id_collection);
 
 
             <div style="text-align:center;">
-                <table style="margin-left:auto; margin-right:auto;  background-image:url('../Images/watermark.png'); background-repeat:no-repeat; background-size: cover; background-position: center;">
+                <table style="margin-left:auto; margin-right:auto;">
                     <thead>
                         <tr>
                             <th style="text-align:left; width:20px;">&nbsp;&nbsp;&nbsp;</th>

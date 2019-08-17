@@ -10,8 +10,205 @@ error_reporting(E_ALL);
 
 
 
-if (isset($_GET['add_o-level_subject'])) {
 
+if (isset($_GET['add_A-level_subject'])) {
+
+    require '../Includes/Class/db_connect.php';
+    $db_conn = new DatabaseConnection ();
+    $conn = $db_conn->conn;
+
+    $subject_id = filter_input(INPUT_POST, 'subject_id', FILTER_VALIDATE_INT);
+    $subject_name = filter_input(INPUT_POST, 'subject_name', FILTER_SANITIZE_STRING);
+    $subject_code = filter_input(INPUT_POST, 'subject_code', FILTER_SANITIZE_STRING);
+    $no_of_papers_done = filter_input(INPUT_POST, 'no_of_papers_done', FILTER_VALIDATE_INT);
+    $subject_is_core = isset($_POST['subject_is_core']) ? 1 : 0;
+
+    $subject_id = $subject_id ? $subject_id : 0;
+
+    if ($subject_name && $subject_code && $no_of_papers_done) {
+        if ($subject_id > 0) { // means edit
+            $conn->exec("UPDATE `A_level_subejcts` SET `name`='$subject_name',`subject_code`='$subject_code',`is_core`='$subject_is_core'
+           WHERE `id`=$subject_id");
+        } else { // means new
+            $conn->exec("INSERT INTO `A_level_subejcts` SET `name`='$subject_name',`subject_code`='$subject_code',`is_core`='$subject_is_core'
+            ");
+            $subject_id = $conn->lastInsertId();
+        }
+
+        die (json_encode(
+            array(
+                'success' => true,
+                'msg' => "Update Successfull",
+                'id' => $subject_id
+            )
+        ));
+    } else {
+        die(json_encode(array('success'=>true,'msg'=>"Please supply all fields")));
+    }
+    
+
+} elseif (isset($_GET['update_paper_A_level'])) {
+
+    require '../Includes/Class/db_connect.php';
+    $db_conn = new DatabaseConnection ();
+    $conn = $db_conn->conn;
+
+    $id = (int) $_POST['id'];
+    $subject_id = $_GET['subject'];
+    $paper_code = $_POST['paper_code'];
+    $is_default = (int) $_POST['is_default'];
+    $paper_name = $_POST['paper_name'];
+    $is_default = ($is_default) ? 1 : 0;
+
+    if ($id && $subject_id && $paper_code && $paper_name) {
+        $conn->exec("UPDATE `a_level_subejcts_papers` SET `subject_id`= '$subject_id',`paper_code`='$paper_code',`is_default`='$is_default',
+            `paper_name`='$paper_name' WHERE `id`= '$id'");
+        die(json_encode((array('succes'=>true, 'id'=> $id))));
+    } else {
+        die(json_encode((array('succes'=>false, 'msg'=> "Please supply all fields"))));
+    }
+
+} elseif (isset($_GET['save_new_paper_A_level'])) {
+    require '../Includes/Class/db_connect.php';
+    $db_conn = new DatabaseConnection ();
+    $conn = $db_conn->conn;
+
+    $subject_id = $_GET['subject'];
+    $paper_code = $_POST['paper_code'];
+    $is_default = (int) $_POST['is_default'];
+    $paper_name = $_POST['paper_name'];
+    $is_default = ($is_default) ? 1 : 0;
+
+    if ($subject_id && $paper_code && $paper_name) {
+        $conn->exec("INSERT INTO `a_level_subejcts_papers`(`subject_id`, `paper_code`, `is_default`, `paper_name`) 
+        VALUES ('$subject_id','$paper_code','$is_default','$paper_name')");
+    }
+} elseif(isset($_GET['get_A_level_papers'])) {
+    require '../Includes/Class/db_connect.php';
+    $db_conn = new DatabaseConnection ();
+    $conn = $db_conn->conn;
+
+    $subject = filter_input(INPUT_GET, 'subject', FILTER_VALIDATE_INT);
+
+    $stmt = $conn->query("SELECT * FROM a_level_subejcts_papers WHERE subject_id = $subject ");
+
+    echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+
+    
+} elseif (isset($_GET['get_all_A_level_subjects'])) {
+
+    require '../Includes/Class/db_connect.php';
+    $db_conn = new DatabaseConnection ();
+    $conn = $db_conn->conn;
+
+    $where = "";
+    if (isset($_GET['search'])) {
+        $search = $_GET['search'];
+        $where = " AND name LIKE '%$search%' ";
+    }
+
+    $stmt = $conn->query("SELECT * FROM a_level_subejcts WHERE 1=1 $where ");
+
+    $results = array();
+
+    foreach ($stmt->fetchAll(PDO::FETCH_OBJ) as $key => $row) {
+
+        $row->subject_is_core = '';
+        if ($row->is_core) {
+            $row->subject_is_core = 'compulsory';
+        }
+
+        // get the papers in the subject
+        $stmt2 = $conn->query("SELECT IFNULL(GROUP_CONCAT(paper_code SEPARATOR ', '), '') AS subject_papers FROM a_level_subejcts_papers WHERE subject_id = $row->id ");
+        $row->subject_papers = $stmt2->fetchObject()->subject_papers;
+
+        // get the default papers in the subject
+        $stmt2 = $conn->query("SELECT IFNULL(GROUP_CONCAT(paper_code SEPARATOR ', '), '') AS subject_papers FROM a_level_subejcts_papers WHERE subject_id = $row->id AND is_default = '1'   ");
+        $row->subject_default_papers = $stmt2->fetchObject()->subject_papers;
+
+
+
+        array_push($results, $row);
+    }
+
+    echo json_encode($results);
+
+
+
+} elseif (isset($_GET['update_paper'])) {
+
+    require '../Includes/Class/db_connect.php';
+    $db_conn = new DatabaseConnection ();
+    $conn = $db_conn->conn;
+
+    $id = (int) $_POST['id'];
+    $subject_id = $_GET['subject'];
+    $paper_code = $_POST['paper_code'];
+    $is_default = (int) $_POST['is_default'];
+    $paper_name = $_POST['paper_name'];
+    $is_default = ($is_default) ? 1 : 0;
+
+    if ($id && $subject_id && $paper_code && $paper_name) {
+        $conn->exec("UPDATE `o_level_subejcts_papers` SET `subject_id`= '$subject_id',`paper_code`='$paper_code',`is_default`='$is_default',
+            `paper_name`='$paper_name' WHERE `id`= '$id'");
+        die(json_encode((array('succes'=>true, 'id'=> $id))));
+    } else {
+        die(json_encode((array('succes'=>false, 'msg'=> "Please supply all fields"))));
+    }
+
+
+} elseif (isset($_GET['save_new_paper'])) {
+
+    require '../Includes/Class/db_connect.php';
+    $db_conn = new DatabaseConnection ();
+    $conn = $db_conn->conn;
+
+    $subject_id = $_GET['subject'];
+    $paper_code = $_POST['paper_code'];
+    $is_default = (int) $_POST['is_default'];
+    $paper_name = $_POST['paper_name'];
+    $is_default = ($is_default) ? 1 : 0;
+
+    if ($subject_id && $paper_code && $paper_name) {
+        $conn->exec("INSERT INTO `o_level_subejcts_papers`(`subject_id`, `paper_code`, `is_default`, `paper_name`) 
+        VALUES ('$subject_id','$paper_code','$is_default','$paper_name')");
+    }
+
+
+} elseif(isset($_GET['get_o_level_papers'])) {
+    require '../Includes/Class/db_connect.php';
+    $db_conn = new DatabaseConnection ();
+    $conn = $db_conn->conn;
+
+    $subject = filter_input(INPUT_GET, 'subject', FILTER_VALIDATE_INT);
+
+    $stmt = $conn->query("SELECT * FROM o_level_subejcts_papers WHERE subject_id = $subject ");
+
+    echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+
+    
+} elseif (isset($_GET['delete_subject'])) {
+    require '../Includes/Class/db_connect.php';
+    $db_conn = new DatabaseConnection ();
+    $conn = $db_conn->conn;
+
+    $subject_id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+
+    // get pap
+    $stmt = $conn->query("SELECT COUNT(*) AS counts FROM o_level_subejcts_papers RIGHT JOIN o_level_student_marks ON o_level_student_marks.subject_paper_id = o_level_subejcts_papers.id WHERE o_level_subejcts_papers.subject_id = $subject_id ");
+
+
+    // echo $stmt->fetchObject()->counts;
+
+    if ($stmt->fetchObject()->counts > 0) {
+        die(json_encode(array('success'=>false, 'msg'=>"Some papers in the subject are already assigned to students")));
+    } else {
+        $conn->exec("DELETE FROM o_level_subejcts_papers WHERE  subject_id = $subject_id ");
+        $conn->exec("DELETE FROM o_level_subejcts WHERE  id = $subject_id ");
+        die(json_encode(array('success'=>true, 'msg'=>"Update successfull")));
+    }
+
+} elseif (isset($_GET['add_o-level_subject'])) {
 
     require '../Includes/Class/db_connect.php';
     $db_conn = new DatabaseConnection ();
@@ -28,11 +225,9 @@ if (isset($_GET['add_o-level_subject'])) {
 
     if ($subject_name && $subject_code && $no_of_papers_done) {
         if ($subject_id > 0) { // means edit
-            $conn->exec("UPDATE `o_level_subejcts` SET `name`='$subject_name',`subject_code`='$subject_code',`is_core`='$subject_is_core',
-            `default_papers`='' WHERE `id`=$subject_id");
+            $conn->exec("UPDATE `o_level_subejcts` SET `name`='$subject_name',`subject_code`='$subject_code',`is_core`='$subject_is_core', no_of_papers_done = '$no_of_papers_done' WHERE `id`=$subject_id");
         } else { // means new
-            $conn->exec("INSERT INTO `o_level_subejcts` SET `name`='$subject_name',`subject_code`='$subject_code',`is_core`='$subject_is_core',
-            `default_papers`='' ");
+            $conn->exec("INSERT INTO `o_level_subejcts` SET `name`='$subject_name',`subject_code`='$subject_code',`is_core`='$subject_is_core', no_of_papers_done = '$no_of_papers_done'");
             $subject_id = $conn->lastInsertId();
         }
 
@@ -76,9 +271,8 @@ if (isset($_GET['add_o-level_subject'])) {
         $row->subject_papers = $stmt2->fetchObject()->subject_papers;
 
         // get the default papers in the subject
-        $default_papers_search = !empty($row->default_papers) ? $row->default_papers : -1;
-        $stmt2 = $conn->query("SELECT IFNULL(GROUP_CONCAT(paper_code SEPARATOR ', '), '') AS default_papers_search FROM o_level_subejcts_papers WHERE subject_id IN ($default_papers_search) ");
-        $row->subject_default_papers = $stmt2->fetchObject()->default_papers_search;
+        $stmt2 = $conn->query("SELECT IFNULL(GROUP_CONCAT(paper_code SEPARATOR ', '), '') AS subject_papers FROM o_level_subejcts_papers WHERE subject_id = $row->id AND is_default = '1'   ");
+        $row->subject_default_papers = $stmt2->fetchObject()->subject_papers;
 
 
 

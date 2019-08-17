@@ -51,17 +51,16 @@ if (!isset($_SESSION))
     </div>
 
     <!-- begin section for schools -->
-    <table id="subjects-dg" class="easyui-datagrid" title="O-level subject setup" style="width:1170px;height:500px"
-        data-options="singleSelect:true,collapsible:true,method:'get', pagination:'true', url:'update_settings.php?get_all_o_level_subjects', fitcolumns:false" toolbar="#settings-dg-toolbar">
+    <table id="subjects-dg" class="easyui-datagrid" title="A-level subject setup" style="width:1170px;height:500px"
+        data-options="singleSelect:true,collapsible:true,method:'get', pagination:'true', url:'update_settings.php?get_all_A_level_subjects', fitcolumns:false" toolbar="#settings-dg-toolbar">
         <thead>
             <tr>
                 <th data-options="field:'id',width:80">No</th>
-                <th data-options="field:'name',width:200">Subject Name</th>
+                <th data-options="field:'name',width:300">Subject Name</th>
                 <th data-options="field:'subject_code',width:150,align:'center'">Subject Code</th>
                 <th data-options="field:'subject_papers',width:200,align:'left'">Papers</th>
                 <th data-options="field:'subject_is_core',width:100,align:'center'">Compulsory</th>
                 <th data-options="field:'subject_default_papers',width:150,align:'center'">Default Papers</th>
-                <th data-options="field:'no_of_papers_done',width:'auto',align:'center'">Papers Done</th>
                 <th data-options="field:'action',width:180,align:'center'" formatter= "userActionFormtter">Action</th>
             </tr>
         </thead>
@@ -765,7 +764,7 @@ if (!isset($_SESSION))
     function saveSubject ()
     {
         $('#update-subject-form').form('submit', {
-            url: "update_settings.php?add_o-level_subject",
+            url: "update_settings.php?add_A-level_subject",
             onSubmit: function (param) {
                 return $(this).form('validate');
             },
@@ -858,6 +857,10 @@ if (!isset($_SESSION))
 
     function userActionFormtter (value, row, index)
     {
+
+
+        if (parseInt(row.id) == 1) return '';
+
         if (row.id) {
             return '<input type="button" value="edit" onClick="editSubject('+index+')"> <input type="button" value="delete" onClick="deleteSubject('+row.id+')">';
         }
@@ -1393,10 +1396,10 @@ if (!isset($_SESSION))
         if (!subject) return $('#subject-papers').hide();
         $('#subject-papers').show();
         $('#dg-subject-papers').edatagrid({
-            url: 'update_settings.php?get_o_level_papers&subject=' + subject,
-            saveUrl: 'update_settings.php?save_new_paper&subject=' + subject,
-            destroyUrl: 'update_settings.php?delete_paper&subject=' + subject,
-            updateUrl: 'update_settings.php?update_paper&subject=' + subject,
+            url: 'update_settings.php?get_A_level_papers&subject=' + subject,
+            saveUrl: 'update_settings.php?save_new_paper_A_level&subject=' + subject,
+            destroyUrl: 'update_settings.php?delete_paper_A_level&subject=' + subject,
+            updateUrl: 'update_settings.php?update_paper_A_level&subject=' + subject,
         });
     }
 
@@ -1406,10 +1409,10 @@ if (!isset($_SESSION))
 <script>
     $(function () {
         $('#dg-subject-papers').edatagrid({
-            url: 'update_settings.php?get_o_level_papers&subject=' + 2,
-            saveUrl: 'update_settings.php?save_new_paper&subject=' + 2,
-            destroyUrl: 'update_settings.php?delete_paper&subject=' + 2,
-            updateUrl: 'update_settings.php?update_paper&subject=' + 2,
+            url: 'update_settings.php?get_A_level_papers&subject=' + 2,
+            saveUrl: 'update_settings.php?save_new_paper_A_level&subject=' + 2,
+            destroyUrl: 'update_settings.php?delete_paper_A_level&subject=' + 2,
+            updateUrl: 'update_settings.php?update_paper_A_level&subject=' + 2,
         });
         $('#dg-subject-papers').edatagrid({
             title: 'Papers',
@@ -1418,7 +1421,7 @@ if (!isset($_SESSION))
             method: 'get',
             pagination: true,
             fitCoumns: true,
-            url: 'update_settings.php?get_o_level_papers&subject=' + 2,
+            url: 'update_settings.php?get_A_level_papers&subject=' + 2,
             columns: [[
                 {field:'id', width:80, align:'left', title:'Id'},
                 {field:'paper_code', width:150, align:'left', title:'Paper Code', editor: {type:'text'}},

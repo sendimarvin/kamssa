@@ -148,7 +148,6 @@ class ALevelStudentReport {
                     $subject_grade = 'F';
                     $paper_points = 0;
                 }
-                
             }
 
             $subject->grade = $subject_grade;
@@ -209,13 +208,13 @@ $studet_ids = explode(',', $student_id_collection);
             $studentSubejcts = $ALevelStudentReport->getStudentSubjectMarks();
     ?>
         <!-- begin section for generaing students report -->
-        <section style="border:solid; padding: 10px; width: 800px; margin:auto;">
+        <section style="border:solid; padding: 10px; width: 800px; margin:auto; background-image:url('../Images/watermark.png'); background-repeat:no-repeat; background-size: cover; background-position: center;">
             <div style="text-align:center;">
 
             <table style="margin-left: 5%;">
                 <tr>
                     <td>
-                        <img src="../Images/logo.jpeg" style="width:100px; height: 1o0px;" alt="">
+                        <img src="../Images/logo.jpeg" style="width:100px; height: 100px;" alt="">
                     </td>
                     <td>
                         <h2 stlye="display:inline">KAMPALA INTEGRATED SECONDARY SCHOOLS' <br> EXAMINATION BUREAU 2019</h2>
@@ -247,7 +246,7 @@ $studet_ids = explode(',', $student_id_collection);
 
             <div style="text-align:center;">
                 <span style="font-weight:bold" class="report-text">COMBINATION <?= $student_details->combination_name?></span>
-                <table style="margin-left:auto; margin-right:auto;  background-image:url('../Images/watermark.png'); background-repeat:no-repeat; background-size: cover; background-position: center;">
+                <table style="margin-left:auto; margin-right:auto;">
                     <thead>
                         <tr>
                             <th style="text-align:left; width:40px;">No&nbsp;</th>

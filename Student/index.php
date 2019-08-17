@@ -882,9 +882,9 @@
                     </tr>
 
                     <tr>
-                        <td>Mark</td>
+                        <td>Mark (Put -1 incase the student never did the paper)</td>
                         <td>
-                            <input class="easyui-numberbox" data-options="min:0, max:100, precession:2" type="number" id="paper_mark" name="paper_mark" style="width:300px;" required>
+                            <input class="easyui-numberbox" data-options="min:-1, max:100, precession:2" type="number" id="paper_mark" name="paper_mark" style="width:300px;" required>
                         </td>
                     </tr>
 
@@ -933,9 +933,9 @@
                     </tr>
 
                     <tr>
-                        <td>Mark</td>
+                        <td>Mark (Put -1 incase the student never did the paper)</td>
                         <td>
-                            <input class="easyui-numberbox" data-options="min:0, max:100, precession:2" type="number" id="paper_mark_A_level" name="paper_mark_A_level" style="width:300px;" required>
+                            <input class="easyui-numberbox" data-options="min:-1, max:100, precession:2" type="number" id="paper_mark_A_level" name="paper_mark_A_level" style="width:300px;" required>
                         </td>
                     </tr>
 
@@ -969,9 +969,10 @@
                 return showMessager('Info', 'Plaese select a level');
             }
 
-
-            var window_status = window.open('print_analysed_report.php?school_id='+ school_id + '&level=' + level, 'Student Printout', 'top:0px;left:0px;width:400px;' );
-
+            if (level == 'O-level')
+                var window_status = window.open('print_analysed_report.php?school_id='+ school_id + '&level=' + level, 'Student Printout', 'top:0px;left:0px;width:400px;' );
+            else
+                var window_status = window.open('print_analysed_report_a_level.php?school_id='+ school_id + '&level=' + level, 'Student Printout', 'top:0px;left:0px;width:400px;' );
             if (!window_status) {
                 showMessager('Info', 'Please Disable your pop-up blocker to pritnt the report');
             }
