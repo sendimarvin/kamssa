@@ -439,8 +439,26 @@ class GenerateAnalysedReportALevel {
 
         // grade paper
         $subject_paper_details = [];
+        $temp_sub_data = new \stdClass();
+        $marks_data  = [];
         foreach ($papers as $key => $paper) {
-            $subject_paper_details[] = $this->gradeALevelPaper($paper->marks, $subject_details->is_core, $subject_name); // get paper grade details
+            if ($subject_details->is_core == 1) { // grading for ict or submaths
+                $temp_sub_data = $paper;
+                $marks_data[] = $paper->marks;
+            } else {
+                $subject_paper_details[] = $this->gradeALevelPaper($paper->marks, $subject_details->is_core, $subject_name); // get paper grade details
+            }
+        }
+
+        // grade ict or submaths from here
+        if (!empty($marks_data)) {
+            // get the average score
+            $total = 0;
+            foreach ($marks_data as $key => $mark) {
+                $total += $mark;
+            }
+            $average_score = (count($marks_data) > 0) ? ($total / count($marks_data)) : 0;
+            $subject_paper_details[] = $this->gradeALevelPaper($average_score, $subject_details->is_core, $subject_name);
         }
 
         return $this->getSubjectGradeDetails($subject_paper_details, $subject_details->is_core, $subject_name);

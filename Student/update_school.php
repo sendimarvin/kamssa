@@ -60,7 +60,12 @@ if (isset($_GET['delete_A_level_student'])) {
     $id = $_GET['id'];
     $student_id = $_GET['student_id'];
 
-    $conn->exec("DELETE FROM A_level_student_marks WHERE id= $id AND student_id = $student_id ");
+    // get all paper in subject
+    $stmt = $conn->query("SELECT * FROM a_level_subejcts_papers WHERE subject_id = $id  ");
+    
+    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $key => $papers) {
+        $conn->exec("DELETE FROM a_level_student_marks WHERE subject_paper_id = '{$papers['id']}' AND student_id = $student_id ");
+    }
 
     echo "1";
 
@@ -666,10 +671,13 @@ if (isset($_GET['delete_A_level_student'])) {
     $id = $_GET['id'];
     $student_id = $_GET['student_id'];
 
-    // delete all student
-    echo "DELETE FROM o_level_student_marks WHERE id= $id AND student_id = $student_id ";
 
-    $conn->exec("DELETE FROM o_level_student_marks WHERE id= $id AND student_id = $student_id ");
+    // get all paper in subject
+    $stmt = $conn->query("SELECT * FROM o_level_subejcts_papers WHERE subject_id = $id  ");
+    
+    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $key => $papers) {
+        $conn->exec("DELETE FROM o_level_student_marks WHERE subject_paper_id = '{$papers['id']}' AND student_id = $student_id ");
+    }
 
     echo "1";
 
