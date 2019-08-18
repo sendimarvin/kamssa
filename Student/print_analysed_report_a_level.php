@@ -13,7 +13,7 @@
 
 
  $analysed_report = new GenerateAnalysedReportALevel($school_id, $level);
-
+ $school_details = $analysed_report->getSchoolDetails();
  $subjects =  $analysed_report->getAllALevelSubjects();
  $students =  $analysed_report->getAllAStudentsInSchool();
  
@@ -66,12 +66,12 @@
                     </td>
                     <td>
                         <h2 stlye="display:inline">KAMPALA INTEGRATED SECONDARY SCHOOLS' <br> EXAMINATION BUREAU 2019</h2>
+                        <h4 stlye="display:inline"><?= $school_details->name?> <?= $school_details->district?> <?= $school_details->center_no?></h2>
                     </td>
                 </tr>
-
             </table>
                 
-                <h4 style="margin:0px;" class="report-text">UACE MOCK PASSLIP</h4>
+                <h4 style="margin:0px;" class="report-text">UACE MOCK ANALYSED REPORT</h4>
             </div>
 
 
@@ -94,7 +94,7 @@
                                 <td>Combination</td>
                                 <!-- begin generate subjects -->
                                 <?php foreach($subjects as $key => $subject):?>
-                                <td><?= $subject->name?></td>
+                                <td><?= $subject->short_name?></td>
                                 <?php endforeach;?>
                                 <!-- end generate subjects -->
                                 <td>Points</td>

@@ -94,6 +94,13 @@ if (!isset($_SESSION))
                 </tr>
 
                 <tr>
+                    <td>Subject Short Name</td>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="short_name" name="short_name"  required>
+                    </td>
+                </tr>
+
+                <tr>
                     <td>Subject Code</td>
                     <td>
                         <input class="easyui-validatebox" type="text" id="subject_code" name="subject_code"  required>
@@ -935,6 +942,7 @@ if (!isset($_SESSION))
         
         $('#subject_id').val(row.id);
         $('#subject_name').val(row.name);
+        $('#short_name').val(row.short_name);
         $('#subject_code').val(row.subject_code);
         $('#no_of_papers_done').numberbox('setValue', row.no_of_papers_done);
 

@@ -19,6 +19,7 @@ if (isset($_GET['add_A-level_subject'])) {
 
     $subject_id = filter_input(INPUT_POST, 'subject_id', FILTER_VALIDATE_INT);
     $subject_name = filter_input(INPUT_POST, 'subject_name', FILTER_SANITIZE_STRING);
+    $short_name = filter_input(INPUT_POST, 'short_name', FILTER_SANITIZE_STRING);
     $subject_code = filter_input(INPUT_POST, 'subject_code', FILTER_SANITIZE_STRING);
     $no_of_papers_done = filter_input(INPUT_POST, 'no_of_papers_done', FILTER_VALIDATE_INT);
     $subject_is_core = isset($_POST['subject_is_core']) ? 1 : 0;
@@ -27,10 +28,11 @@ if (isset($_GET['add_A-level_subject'])) {
 
     if ($subject_name && $subject_code && $no_of_papers_done) {
         if ($subject_id > 0) { // means edit
-            $conn->exec("UPDATE `A_level_subejcts` SET `name`='$subject_name',`subject_code`='$subject_code',`is_core`='$subject_is_core'
+            $conn->exec("UPDATE `A_level_subejcts` SET `name`='$subject_name',`subject_code`='$subject_code',`is_core`='$subject_is_core',
+            `short_name` = '$short_name'
            WHERE `id`=$subject_id");
         } else { // means new
-            $conn->exec("INSERT INTO `A_level_subejcts` SET `name`='$subject_name',`subject_code`='$subject_code',`is_core`='$subject_is_core'
+            $conn->exec("INSERT INTO `A_level_subejcts` SET `name`='$subject_name',`subject_code`='$subject_code',`is_core`='$subject_is_core', `short_name` = '$short_name'
             ");
             $subject_id = $conn->lastInsertId();
         }
@@ -216,6 +218,7 @@ if (isset($_GET['add_A-level_subject'])) {
 
     $subject_id = filter_input(INPUT_POST, 'subject_id', FILTER_VALIDATE_INT);
     $subject_name = filter_input(INPUT_POST, 'subject_name', FILTER_SANITIZE_STRING);
+    $short_name = filter_input(INPUT_POST, 'short_name', FILTER_SANITIZE_STRING);
     $subject_code = filter_input(INPUT_POST, 'subject_code', FILTER_SANITIZE_STRING);
     $no_of_papers_done = filter_input(INPUT_POST, 'no_of_papers_done', FILTER_VALIDATE_INT);
     $subject_is_core = isset($_POST['subject_is_core']) ? 1 : 0;
@@ -225,9 +228,9 @@ if (isset($_GET['add_A-level_subject'])) {
 
     if ($subject_name && $subject_code && $no_of_papers_done) {
         if ($subject_id > 0) { // means edit
-            $conn->exec("UPDATE `o_level_subejcts` SET `name`='$subject_name',`subject_code`='$subject_code',`is_core`='$subject_is_core', no_of_papers_done = '$no_of_papers_done' WHERE `id`=$subject_id");
+            $conn->exec("UPDATE `o_level_subejcts` SET `name`='$subject_name',`subject_code`='$subject_code',`is_core`='$subject_is_core', no_of_papers_done = '$no_of_papers_done', `short_name` = '$short_name' WHERE `id`=$subject_id");
         } else { // means new
-            $conn->exec("INSERT INTO `o_level_subejcts` SET `name`='$subject_name',`subject_code`='$subject_code',`is_core`='$subject_is_core', no_of_papers_done = '$no_of_papers_done'");
+            $conn->exec("INSERT INTO `o_level_subejcts` SET `name`='$subject_name',`subject_code`='$subject_code',`is_core`='$subject_is_core', no_of_papers_done = '$no_of_papers_done', `short_name` = '$short_name'");
             $subject_id = $conn->lastInsertId();
         }
 

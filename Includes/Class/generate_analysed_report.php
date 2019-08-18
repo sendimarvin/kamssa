@@ -26,6 +26,12 @@ class GenerateAnalysedReport {
         $this->conn = $db_conn->conn;
     }
 
+    public function getSchoolDetails ()
+    {
+        $stmt = $this->conn->query("SELECT * FROM schools WHERE id = '{$this->school_id}'");
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+
     /**
      * 
      */
@@ -158,14 +164,34 @@ class GenerateAnalysedReport {
 
     }
 
-    public function getTotalPass8 ($subject_details)
+    public function getTotalPass ($subject_details)
     {
         $total_pass = 0;
         foreach ($subject_details as $key => $subject_detail) {
-            if ($subject_detail['points'] <> 'X' && $subject_detail['points'] > 7)
+            if ($subject_detail['points'] <> 'X' && $subject_detail['points'] < 9)
                 ++$total_pass;
         }
         return $total_pass;
+    }
+
+    public function getTotalCredits ($subject_details)
+    {
+        $total_credits = 0;
+        foreach ($subject_details as $key => $subject_detail) {
+            if ($subject_detail['points'] <> 'X' && $subject_detail['points'] >= 3 && $subject_detail['points'] <= 6)
+                ++$total_credits;
+        }
+        return $total_credits;
+    }
+
+    public function getTotalPass8 ($subject_details)
+    {
+        $total_pass8 = 0;
+        foreach ($subject_details as $key => $subject_detail) {
+            if ($subject_detail['points'] <> 'X' && $subject_detail['points'] > 3)
+                ++$total_pass8;
+        }
+        return $total_pass8;
     }
 
 
@@ -177,17 +203,28 @@ class GenerateAnalysedReport {
     */
     public function getGrade ($aggregates, $subject_details)
     {
-
+        $total_pass = $this->getTotalPass ($subject_details);
         $total_pass8 = $this->getTotalPass8 ($subject_details);
+        // $total_credits = $this->getTotalCredits ($subject_details);
+        $is_maths_greater_than_pass8 = $this->is_maths_greater_than_pass8($subject_details);
+        $has_atleast_credit_in_english = $this->has_atleast_credit_in_english($subject_details);
+        $has_done_all_complusory_subject = $this->has_done_all_complusory_subject($subject_details);
+        $has_done_less_than_8_subjects = $this->has_done_less_than_8_subjects($subject_details);
 
-
-        if ($aggregates >= 8 && $aggregates <= 32 && $total_pass8 < 3) {
+        // var_dump( $is_maths_greater_than_pass8);
+        if ($has_done_less_than_8_subjects) {
+            return "U";
+        } elseif (!$has_done_all_complusory_subject) {
+            return "X";
+        } elseif ($aggregates >= 68 && $aggregates <= 72 || $total_pass8 > 3   ) {
+            return 9;
+        } elseif ($aggregates >= 8 && $aggregates <= 32 && $total_pass >= 8 && $is_maths_greater_than_pass8 && $has_atleast_credit_in_english ) {
             return 1;
-        } elseif ($aggregates > 32 && $aggregates <= 45 && $total_pass8 < 3) {
+        } elseif ($aggregates > 8 && $aggregates <= 45 && $total_pass >=8  && ($total_pass >=8)) {
             return 2;
-        } elseif ($aggregates > 45 && $aggregates <= 58 && $total_pass8 < 3) {
+        } elseif ($aggregates > 8 && $aggregates <= 58 && $total_pass >=8) {
             return 3;
-        } elseif ($aggregates > 58 && $aggregates <= 68 && $total_pass8 < 3) {
+        } elseif ($aggregates > 8 && $aggregates <= 68) {
             return 4;
         } elseif ($aggregates > 68 && $aggregates <= 72) {
             return 4;
@@ -248,7 +285,68 @@ class GenerateAnalysedReport {
         return $total;
     }
 
+    public function is_maths_greater_than_pass8 ($subject_details)
+    {
+        $is_greater_than_pass8 = false;
+        foreach ($subject_details as $key => $subject) {
+            if (strtolower($subject['subject_name']) == 'mathematics') {
+                if ($subject['points'] <> 'X' && $subject['points'] < 8)
+                $is_greater_than_pass8 = true;
+                break;
+            }
+        }
+        return $is_greater_than_pass8;
+    }
+
+    public function has_atleast_credit_in_english ($subject_details)
+    {
+        $has_atleast_credit_in_english = false;
+        foreach ($subject_details as $key => $subject) {
+            if (strtolower($subject['subject_name']) == 'english') {
+                if ($subject['points'] <> 'X' && $subject['points'] < 7)
+                $has_atleast_credit_in_english = true;
+                break;
+            }
+        }
+        return $has_atleast_credit_in_english;
+    }
+
+    public function has_done_all_complusory_subject ($subject_details)
+    {
+        $has_done_all_complusory_subject = true;
+        foreach ($subject_details as $key => $subject) {
+            if ($subject['is_core'] > 0) {
+                if ($subject['points'] == 'X')
+                $has_done_all_complusory_subject = false;
+                break;
+            }
+        }
+        return $has_done_all_complusory_subject;
+    }
+
+    public function has_done_less_than_8_subjects ($subject_details)
+    {
+        $done_subjects = 0;
+        foreach ($subject_details as $key => $subject) {
+            if ($subject['points'] == 'X') {
+                ++$done_subjects;
+            }
+        }
+        return ($done_subjects >= 8 ) ?  true : false;
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -280,6 +378,12 @@ class GenerateAnalysedReportALevel {
         require_once 'db_connect.php';
         $db_conn = new DatabaseConnection();
         $this->conn = $db_conn->conn;
+    }
+
+    public function getSchoolDetails ()
+    {
+        $stmt = $this->conn->query("SELECT * FROM schools WHERE id = '{$this->school_id}'");
+        return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
     /**
@@ -457,95 +561,6 @@ class GenerateAnalysedReportALevel {
         return $points;
     }
 
-    public function getTotalPass8 ($subject_details)
-    {
-        $total_pass = 0;
-        foreach ($subject_details as $key => $subject_detail) {
-            if ($subject_detail['points'] <> 'X' && $subject_detail['points'] > 7)
-                ++$total_pass;
-        }
-        return $total_pass;
-    }
-
-
-    /**
-     * Gets the grate from aggregates and other extra conditions
-     * @param int|string $aggregates => the aggregates of the best done 8 subjects
-     * @param array $subject_detail => $contains done subjects
-     * @return string|char => grade results
-    */
-    public function getGrade ($aggregates, $subject_details)
-    {
-
-        $total_pass8 = $this->getTotalPass8 ($subject_details);
-
-
-        if ($aggregates >= 8 && $aggregates <= 32 && $total_pass8 < 3) {
-            return 1;
-        } elseif ($aggregates > 32 && $aggregates <= 45 && $total_pass8 < 3) {
-            return 2;
-        } elseif ($aggregates > 45 && $aggregates <= 58 && $total_pass8 < 3) {
-            return 3;
-        } elseif ($aggregates > 58 && $aggregates <= 68 && $total_pass8 < 3) {
-            return 4;
-        } elseif ($aggregates > 68 && $aggregates <= 72) {
-            return 4;
-        } else {
-            return "U";
-        }
-    }
-
-    public function getBestDone8 ($subjects_details)
-    {
-        $new_results = []; // max initial size is 8
-
-        foreach ($subjects_details as $key => $subjects_detail) {
-            if ($subjects_detail['grade'] == 'X')
-                    continue;
-
-            if (count($new_results) < 8) {
-                $new_results[] = $subjects_detail;
-                continue;
-            } else { // means stack is already ull with 8
-
-                // check if new subjuect is lower than some that exists
-                foreach ($new_results as $key2 => $new_result) {
-                    if ($new_result['points'] > $subjects_detail['points']) {
-                        // shift paper and break
-                        $new_result[$key2] = $subjects_detail;
-                        break;
-                    }
-                }
-            }
-        }
-
-        // grade best 8 done
-        $best_done_agg = 0;
-        foreach ($new_results as $key => $new_result) {
-            $best_done_agg += $new_result['points'];
-        }
-
-        if (count($new_results) <> 8)
-            return 'X';
-        else
-            return $best_done_agg;
-
-    }
-
-    /**
-     * gets the total subjects done
-     * @param array $subject details => arraty associations
-     * @return int => subjects done
-     */
-    public function getTotalSubjectsDone ($subjects_details)
-    {
-        $total = 0;
-        foreach ($subjects_details as $key => $subjects_detail) {
-            if ($subjects_detail['grade'] <> 'X')
-                ++$total;
-        }
-        return $total;
-    }
 
 }
 
