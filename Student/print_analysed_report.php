@@ -80,7 +80,7 @@ $students =  $analysed_report->getAllOStudentsInSchool();
             <div>
                 <div style="text-align:center;">
 
-                    <table class="grade-table">
+                    <table class="grade-table" border="1" cellpadding="3" cellspacing="0">
                         <thead>
                                 <td>No</td>
                                 <td>Name</td>
