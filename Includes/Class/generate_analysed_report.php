@@ -204,7 +204,7 @@ class GenerateAnalysedReport {
     public function getGrade ($aggregates, $subject_details)
     {
         $total_pass = $this->getTotalPass ($subject_details);
-        $total_pass8 = $this->getTotalPass8 ($subject_details);
+        // $total_pass8 = $this->getTotalPass8 ($subject_details);
         // $total_credits = $this->getTotalCredits ($subject_details);
         $is_maths_greater_than_pass8 = $this->is_maths_greater_than_pass8($subject_details);
         $has_atleast_credit_in_english = $this->has_atleast_credit_in_english($subject_details);
@@ -216,7 +216,7 @@ class GenerateAnalysedReport {
             return "U";
         } elseif (!$has_done_all_complusory_subject) {
             return "X";
-        } elseif ($aggregates >= 68 && $aggregates <= 72 || $total_pass8 > 3   ) {
+        } elseif ($aggregates >= 68 && $aggregates <= 72 ) {
             return 9;
         } elseif ($aggregates >= 8 && $aggregates <= 32 && $total_pass >= 8 && $is_maths_greater_than_pass8 && $has_atleast_credit_in_english ) {
             return 1;
@@ -343,13 +343,6 @@ class GenerateAnalysedReport {
 
 
 
-
-
-
-
-
-
-
 class GenerateAnalysedReportALevel {
 
     const A_GRADE = [ '1,1,1', '1,1,2', '1,2,2', '1,2,3',  '2,2,2', '2,2,3', '1,1', '1,2', '2,2'];
@@ -419,9 +412,7 @@ class GenerateAnalysedReportALevel {
 
         $total_papers_required = $subject_details->no_of_papers_done;
         $subject_name = $subject_details->name;
-
-        // die("SELECT o_level_student_marks.* FROM  o_level_student_marks LEFT JOIN o_level_subejcts_papers ON o_level_subejcts_papers.id = o_level_student_marks.subject_paper_id WHERE o_level_subejcts_papers.subject_id = $subject_id ");
-
+        
         // check if student did all the papers
         $stmt2 = $this->conn->query("SELECT a_level_student_marks.* 
             FROM  a_level_student_marks 
@@ -569,7 +560,6 @@ class GenerateAnalysedReportALevel {
      */
     public function getALevelPoints ($subject_details)
     {
-        // var_dump($subject_details);
         $points = 0;
         foreach ($subject_details as $key => $subject) {
             if (is_numeric($subject['points'])) {

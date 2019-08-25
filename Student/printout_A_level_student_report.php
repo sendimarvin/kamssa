@@ -85,27 +85,61 @@ class ALevelStudentReport {
 
             // make individula gradings
             $paper_scores = explode(',', $subject->paper_scores);
+
+
+            $is_core = intVal($subject->is_core);
+            $total = 0;
+            $average_score = 0;
+            $countss = 0;
+            if ( $is_core > 0) {
+                foreach ($paper_scores as $index => $value) { 
+                    // echo "countss:";
+                    // echo $value;
+                    $total += $value;
+                    ++$countss;
+                }
+                // var_dump($total);
+                $average_score = $total / $countss;
+                $paper_scores = [$average_score];
+                // print_r($paper_scores);
+            }
+
+            
+
             $paper_gradings = [];
+            $grade = '';
             foreach ($paper_scores as $index => $value) {
                 $subject_aggregate = 0;
                 if ($value >= 80) {
                     $subject_aggregate = 1;
+                    $grade = 'D1';
                 } elseif ($value >= 75) {
                     $subject_aggregate = 2;
+                    $grade = 'D2';
                 } elseif ($value >= 66) {
                     $subject_aggregate = 3;
+                    $grade = 'C3';
                 }elseif ($value >= 60) {
                     $subject_aggregate = 4;
+                    $grade = 'C4';
                 }elseif ($value >= 55) {
                     $subject_aggregate = 5;
+                    $grade = 'C5';
                 }elseif ($value >= 50) {
                     $subject_aggregate = 6;
+                    $grade = 'C6';
                 }elseif ($value >= 45) {
                     $subject_aggregate = 7;
+                    $grade = 'P7';
                 } elseif ($value >= 35) {
                     $subject_aggregate = 8;
-                }else {
+                    $grade = 'P8';
+                } elseif ($value >= 0) {
                     $subject_aggregate = 9;
+                    $grade = 'F9';
+                } else {
+                    $grade = 'X';
+                    $subject_aggregate = 'X';
                 }
                 $paper_gradings[] = $subject_aggregate;
             }
@@ -142,10 +176,10 @@ class ALevelStudentReport {
             // GRADE CORE SUBJECTS
             if (intVal($subject->is_core) > 0) {
                 if (array_search($subject_grade, self::O_GRADE_CORE) !== false ) {
-                    $subject_grade = 'O';
+                    $subject_grade = $grade;
                     $paper_points = 1;
                 } else {
-                    $subject_grade = 'F';
+                    $subject_grade = $grade;
                     $paper_points = 0;
                 }
             }

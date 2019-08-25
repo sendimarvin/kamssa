@@ -16,7 +16,6 @@ $school_details = $analysed_report->getSchoolDetails();
 $subjects =  $analysed_report->getAllOLevelSubjects();
 $students =  $analysed_report->getAllOStudentsInSchool();
 
-
 ?>
 
 
