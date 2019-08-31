@@ -113,9 +113,9 @@ class OLevelStudentReport {
             $results[$key] = $subject;
         }
 
-        $aggregates = $this->getBestDone8($data);
+        // $aggregates = $this->getBestDone8($data);
 
-        $this->aggregates = $aggregates;
+        // $this->aggregates = $aggregates;
 
         // find missing core subjects
         $missing_subjects = $this->getMissingCoreSubejcts($found_subject_ids);
@@ -128,39 +128,47 @@ class OLevelStudentReport {
     }
 
 
-    public function getBestDone8 ($subjects_details)
-    {
-        $new_results = []; // max initial size is 8
+    // public function getBestDone8 ($subjects_details)
+    // {
+    //     $new_results = []; // max initial size is 8
 
-        foreach ($subjects_details as $key => $subjects_detail) {
-            if ($subjects_detail->grade == 'X')
-                    continue;
 
-            if (count($new_results) < 8) {
-                $new_results[] = $subjects_detail;
-                continue;
-            } else { // means stack is already ull with 8
+    //     foreach ($subjects_details as $key => $subjects_detail) {
+    //         if ($subjects_detail->grade == 'X')
+    //                 continue;
 
-                // check if new subjuect is lower than some that exists
-                foreach ($new_results as $key2 => $new_result) {
-                    if ($new_result->subject_aggregate > $subjects_detail->subject_aggregate) {
-                        // shift paper and break
-                        $new_result[$key2] = $subjects_detail;
-                        break;
-                    }
-                }
-            }
-        }
+    //         if (count($new_results) < 8) {
+    //             $new_results[] = $subjects_detail;
+    //             continue;
+    //         } else { // means stack is already full with 8
 
-        // grade best 8 done
-        $best_done_agg = 0;
-        foreach ($new_results as $key => $new_result) {
-            $best_done_agg += $new_result->subject_aggregate;
-        }
+    //             // check if new subjuect is lower than some that exists
+    //             foreach ($new_results as $key2 => $new_result) {
+    //                 if ($new_result->subject_aggregate > $subjects_detail->subject_aggregate) {
+    //                     // shift paper and break
 
-        return $best_done_agg;
+    //                     // echo "shifting paper";
+    //                     // print_r($new_results[$key2]);
+    //                     // echo "with";
+    //                     // print_r($subjects_detail);
+    //                     $new_results[$key2] = $subjects_detail;
+    //                     break;
+    //                 }
+    //             }
+    //         }
+    //     }
 
-    }
+    //     // grade best 8 done
+    //     $best_done_agg = 0;
+    //     foreach ($new_results as $key => $new_result) {
+    //         // echo "<br>";
+    //         // print_r($new_result);
+    //         $best_done_agg += $new_result->subject_aggregate;
+    //     }
+
+    //     return $best_done_agg;
+
+    // }
 
     /**
      * This will check for the missing subjects that are core
@@ -182,23 +190,132 @@ class OLevelStudentReport {
 
     }
 
-    public function getGrade ()
+    public function getTotalPass7s ($subject_details)
     {
-        $grade = 'X';
-        if ($this->is_missing_core) {
-            return 'X';
-        }elseif ($this->aggregates >= 8 && $this->aggregates <= 32) {
-            return 1;
-        } elseif ($this->aggregates > 32 && $this->aggregates <= 45) {
-            return 2;
-        } elseif ($this->aggregates > 45 && $this->aggregates <= 58) {
+        $total_pass7s = 0;
+        foreach ($subject_details as $key => $subject_detail) {
+            if (intVal($subject_detail['points']) === 7)
+                ++$total_pass7s;
+        }
+        return $total_pass7s;
+    }
+
+    public function getTotalPass8s ($subject_details)
+    {
+        $total_pass8s = 0;
+        foreach ($subject_details as $key => $subject_detail) {
+            if (intVal($subject_detail['points']) === 8)
+                ++$total_pass8s;
+        }
+        return $total_pass8s;
+    }
+
+    public function getTotalCredits ($subject_details)
+    {
+        $total_credits = 0;
+        foreach ($subject_details as $key => $subject_detail) {
+            if ($subject_detail['points'] <> 'X' && $subject_detail['points'] >= 3 && $subject_detail['points'] <= 6)
+                ++$total_credits;
+        }
+        return $total_credits;
+    }
+
+    public function is_english_greater_than_pass8 ($subject_details)
+    {
+        $is_greater_than_pass8 = false;
+        foreach ($subject_details as $key => $subject) {
+            if (strtolower($subject['subject_name']) == 'english') {
+                if ($subject['points'] <> 'X' && $subject['points'] <= 8)
+                $is_greater_than_pass8 = true;
+                break;
+            }
+        }
+        return $is_greater_than_pass8;
+    }
+
+    public function has_atleast_pass8_in_maths ($subject_details)
+    {
+        $has_atleast_credit_in_maths = false;
+        foreach ($subject_details as $key => $subject) {
+            if (strtolower($subject['subject_name']) == 'mathematics') {
+                if ($subject['points'] <> 'X' && $subject['points'] <= 8)
+                $has_atleast_credit_in_maths = true;
+                break;
+            }
+        }
+        return $has_atleast_credit_in_maths;
+    }
+
+    public function has_atleast_pass8_in_physics ($subject_details)
+    {
+        $has_atleast_credit_in_maths = false;
+        foreach ($subject_details as $key => $subject) {
+            if (strtolower($subject['subject_name']) == 'physics') {
+                if ($subject['points'] <> 'X' && $subject['points'] <= 8)
+                $has_atleast_credit_in_maths = true;
+                break;
+            }
+        }
+        return $has_atleast_credit_in_maths;
+    }
+
+    public function has_atleast_pass8_in_chemistry ($subject_details)
+    {
+        $has_atleast_credit_in_maths = false;
+        foreach ($subject_details as $key => $subject) {
+            if (strtolower($subject['subject_name']) == 'chemistry') {
+                if ($subject['points'] <> 'X' && $subject['points'] <= 8)
+                $has_atleast_credit_in_maths = true;
+                break;
+            }
+        }
+        return $has_atleast_credit_in_maths;
+    }
+
+    public function has_atleast_pass8_in_biology ($subject_details)
+    {
+        $has_atleast_credit_in_maths = false;
+        foreach ($subject_details as $key => $subject) {
+            if (strtolower($subject['subject_name']) == 'biology') {
+                if ($subject['points'] <> 'X' && $subject['points'] <= 8)
+                $has_atleast_credit_in_maths = true;
+                break;
+            }
+        }
+        return $has_atleast_credit_in_maths;
+    }
+
+    public function getGrade ($aggregates, $subject_details)
+    {
+        $total_pass = $this->getTotalPass ($subject_details);
+        $total_pass7s = $this->getTotalPass7s ($subject_details);
+        $total_pass8s = $this->getTotalPass8s ($subject_details);
+        $total_passes = ($total_pass7s + $total_pass8s);
+
+        // $total_pass8 = $this->getTotalPass8 ($subject_details);
+        $total_credits = $this->getTotalCredits ($subject_details);
+        $is_maths_greater_than_pass8 = $this->is_maths_greater_than_pass8($subject_details);
+        $is_english_greater_than_pass8 = $this->is_english_greater_than_pass8($subject_details);
+        $has_atleast_credit_in_english = $this->has_atleast_credit_in_english($subject_details);
+        $has_atleast_pass8_in_maths = $this->has_atleast_pass8_in_maths($subject_details);
+        $has_atleast_pass8_in_physics = $this->has_atleast_pass8_in_physics($subject_details);
+        $has_atleast_pass8_in_biology = $this->has_atleast_pass8_in_biology($subject_details);
+        $has_atleast_pass8_in_chemistry = $this->has_atleast_pass8_in_chemistry($subject_details);
+        // $has_done_all_complusory_subject = $this->has_done_all_complusory_subject($subject_details);
+        // $has_done_less_than_8_subjects = $this->has_done_less_than_8_subjects($subject_details);
+
+        if ($aggregates > 69 && $aggregates <= 72 ) {
+            return 9; 
+        } elseif ($aggregates > 58 && $aggregates <= 69 && ( ($total_credits == 1) || ($total_pass7s == 2) || ($total_pass8s == 3) )) {
+            return 4;
+        } elseif ($aggregates > 45 && $aggregates <= 58 && ( ($total_credits == 5) || (($total_credits == 4) && ($total_passes == 3)) || (($total_credits == 3) && ($total_passes == 5)) )) {
             return 3;
-        } elseif ($this->aggregates > 58 && $this->aggregates <= 68) {
-            return 4;
-        } elseif ($this->aggregates > 68 && $this->aggregates <= 72) {
-            return 4;
+        } elseif ($aggregates > 32 && $aggregates <= 45 && ($is_maths_greater_than_pass8 && $is_english_greater_than_pass8 && $total_credits >= 6)) {
+            return 2;
+        } elseif ($aggregates <= 8 && $aggregates <= 32 && ($has_atleast_credit_in_english && $has_atleast_pass8_in_maths && ($has_atleast_pass8_in_physics || $has_atleast_pass8_in_biology || $has_atleast_pass8_in_chemistry) )) {
+            return 1;
         } else {
-            return "U";
+            return "Undefined grade";
         }
     }
 
@@ -218,12 +335,18 @@ class OLevelStudentReport {
         }
 
         $subjects_done = $this->getTotalSubjectsDone ($subject_details_new);
+        $has_done_all_complusory_subject = $this->has_done_all_complusory_subject($subject_details_new);
+
+        if ($subjects_done === 0) return array('aggregates' => 'X', 'grade' => 'X');
 
         if ($subjects_done < 8) return array('aggregates' => 'X', 'grade' => 'U');
 
-        $best_agg = $this->getBestDone82 ($subject_details_new);
+        if (!$has_done_all_complusory_subject) return array('aggregates' => 'X', 'grade' => 7);
 
-        $grade = $this->getGradeNew($best_agg, $subject_details_new);
+        $best_agg = $this->getBestDone8 ($subject_details_new);
+
+        $grade = $this->getGrade($best_agg, $subject_details_new);
+
 
         return array('aggregates' => $best_agg, 'grade' => $grade);
 
@@ -245,7 +368,7 @@ class OLevelStudentReport {
     }
 
     
-    public function getBestDone82 ($subjects_details)
+    public function getBestDone8 ($subjects_details)
     {
         $new_results = []; // max initial size is 8
 
@@ -262,7 +385,7 @@ class OLevelStudentReport {
                 foreach ($new_results as $key2 => $new_result) {
                     if ($new_result['points'] > $subjects_detail['points']) {
                         // shift paper and break
-                        $new_result[$key2] = $subjects_detail;
+                        $new_results[$key2] = $subjects_detail;
                         break;
                     }
                 }
@@ -288,37 +411,37 @@ class OLevelStudentReport {
      * @param array $subject_detail => $contains done subjects
      * @return string|char => grade results
     */
-    public function getGradeNew ($aggregates, $subject_details)
-    {
-        $total_pass = $this->getTotalPass ($subject_details);
-        // $total_pass8 = $this->getTotalPass8 ($subject_details);
-        // $total_credits = $this->getTotalCredits ($subject_details);
-        $is_maths_greater_than_pass8 = $this->is_maths_greater_than_pass8($subject_details);
-        $has_atleast_credit_in_english = $this->has_atleast_credit_in_english($subject_details);
-        $has_done_all_complusory_subject = $this->has_done_all_complusory_subject($subject_details);
-        $has_done_less_than_8_subjects = $this->has_done_less_than_8_subjects($subject_details);
+    // public function getGradeNew ($aggregates, $subject_details)
+    // {
+    //     $total_pass = $this->getTotalPass ($subject_details);
+    //     // $total_pass8 = $this->getTotalPass8 ($subject_details);
+    //     // $total_credits = $this->getTotalCredits ($subject_details);
+    //     $is_maths_greater_than_pass8 = $this->is_maths_greater_than_pass8($subject_details);
+    //     $has_atleast_credit_in_english = $this->has_atleast_credit_in_english($subject_details);
+    //     $has_done_all_complusory_subject = $this->has_done_all_complusory_subject($subject_details);
+    //     $has_done_less_than_8_subjects = $this->has_done_less_than_8_subjects($subject_details);
 
-        // var_dump( $is_maths_greater_than_pass8);
-        if ($has_done_less_than_8_subjects) {
-            return "U";
-        } elseif (!$has_done_all_complusory_subject) {
-            return "X";
-        } elseif ($aggregates >= 68 && $aggregates <= 72 ) {
-            return 9;
-        } elseif ($aggregates >= 8 && $aggregates <= 32 && $total_pass >= 8 && $is_maths_greater_than_pass8 && $has_atleast_credit_in_english ) {
-            return 1;
-        } elseif ($aggregates > 8 && $aggregates <= 45 && $total_pass >=8  && ($total_pass >=8)) {
-            return 2;
-        } elseif ($aggregates > 8 && $aggregates <= 58 && $total_pass >=8) {
-            return 3;
-        } elseif ($aggregates > 8 && $aggregates <= 68) {
-            return 4;
-        } elseif ($aggregates > 68 && $aggregates <= 72) {
-            return 4;
-        } else {
-            return "U";
-        }
-    }
+    //     // var_dump( $is_maths_greater_than_pass8);
+    //     if ($has_done_less_than_8_subjects) {
+    //         return "U";
+    //     } elseif (!$has_done_all_complusory_subject) {
+    //         return "X";
+    //     } elseif ($aggregates >= 68 && $aggregates <= 72 ) {
+    //         return 9;
+    //     } elseif ($aggregates >= 8 && $aggregates <= 32 && $total_pass >= 8 && $is_maths_greater_than_pass8 && $has_atleast_credit_in_english ) {
+    //         return 1;
+    //     } elseif ($aggregates > 8 && $aggregates <= 45 && $total_pass >=8  && ($total_pass >=8)) {
+    //         return 2;
+    //     } elseif ($aggregates > 8 && $aggregates <= 58 && $total_pass >=8) {
+    //         return 3;
+    //     } elseif ($aggregates > 8 && $aggregates <= 68) {
+    //         return 4;
+    //     } elseif ($aggregates > 68 && $aggregates <= 72) {
+    //         return 4;
+    //     } else {
+    //         return "U";
+    //     }
+    // }
 
     public function has_done_all_complusory_subject ($subject_details)
     {

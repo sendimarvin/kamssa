@@ -14,7 +14,7 @@
 $analysed_report = new GenerateAnalysedReport($school_id, $level);
 $school_details = $analysed_report->getSchoolDetails();
 $subjects =  $analysed_report->getAllOLevelSubjects();
-$students =  $analysed_report->getAllOStudentsInSchool();
+$students = $analysed_report->getAllOStudentsInSchool();
 
 ?>
 
