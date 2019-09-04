@@ -61,6 +61,7 @@ if (isset($_GET['add_A-level_subject'])) {
     $is_default = (int) $_POST['is_default'];
     $paper_name = $_POST['paper_name'];
     $is_default = ($is_default) ? 1 : 0;
+    $marked_out_of = (double) $_POST['marked_out_of'];
 
     if ($id && $subject_id && $paper_code && $paper_name) {
         $conn->exec("UPDATE `a_level_subejcts_papers` SET `subject_id`= '$subject_id',`paper_code`='$paper_code',`is_default`='$is_default',
@@ -149,10 +150,11 @@ if (isset($_GET['add_A-level_subject'])) {
     $is_default = (int) $_POST['is_default'];
     $paper_name = $_POST['paper_name'];
     $is_default = ($is_default) ? 1 : 0;
+    $marked_out_of = (double) $_POST['marked_out_of'];
 
     if ($id && $subject_id && $paper_code && $paper_name) {
         $conn->exec("UPDATE `o_level_subejcts_papers` SET `subject_id`= '$subject_id',`paper_code`='$paper_code',`is_default`='$is_default',
-            `paper_name`='$paper_name' WHERE `id`= '$id'");
+            `paper_name`='$paper_name', marked_out_of = $marked_out_of WHERE `id`= '$id'");
         die(json_encode((array('succes'=>true, 'id'=> $id))));
     } else {
         die(json_encode((array('succes'=>false, 'msg'=> "Please supply all fields"))));
@@ -170,10 +172,11 @@ if (isset($_GET['add_A-level_subject'])) {
     $is_default = (int) $_POST['is_default'];
     $paper_name = $_POST['paper_name'];
     $is_default = ($is_default) ? 1 : 0;
+    $marked_out_of = (double) $_POST['marked_out_of'];
 
     if ($subject_id && $paper_code && $paper_name) {
-        $conn->exec("INSERT INTO `o_level_subejcts_papers`(`subject_id`, `paper_code`, `is_default`, `paper_name`) 
-        VALUES ('$subject_id','$paper_code','$is_default','$paper_name')");
+        $conn->exec("INSERT INTO `o_level_subejcts_papers`(`subject_id`, `paper_code`, `is_default`, `paper_name`, `marked_out_of`) 
+        VALUES ('$subject_id','$paper_code','$is_default','$paper_name', '$marked_out_of')");
     }
 
 

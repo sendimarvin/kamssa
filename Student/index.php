@@ -1432,7 +1432,10 @@
                     $('#subejct_name').val(row.subject_name);
                     $('#paper_name').val(row.paper_code);
                     $('#paper_code').val(row.paper_code);
-                    $('#paper_mark').numberbox('setValue', row.marks);
+                    row.marks = parseFloat(row.marks, 10);
+                    row.marked_out_of = parseFloat(row.marked_out_of, 10);
+                    var actual_mark = (row.marks) * (row.marked_out_of / 100)
+                    $('#paper_mark').numberbox('setValue', actual_mark);
                     $('#o_level-marks-mark-dlg').dialog('setTitle', 'Edit O-level Student marks').dialog('open'); 
                 } else {
                     showMessager('Warning', 'Please Select Student to edit');

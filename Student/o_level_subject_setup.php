@@ -1459,6 +1459,7 @@ if (!isset($_SESSION))
                     }
                 }},
                 {field:'paper_name', align:'left', width:150, title:'Paper Name', editor: {type:'text'}},
+                {field:'marked_out_of', align:'left', width:150, title:'Marked out of', editor: {type:'numberbox', options:{min:0, max:100, required: true}}}
             ]],
             toolbar: [
                 {

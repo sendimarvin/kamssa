@@ -650,7 +650,7 @@ if (isset($_GET['delete_A_level_student'])) {
     $conn = $db_conn->conn;
 
 
-    $sql = "SELECT MARKS.id AS id, SUBJECTS.name AS subject_name, PAPERS.paper_code, MARKS.marks 
+    $sql = "SELECT MARKS.id AS id, SUBJECTS.name AS subject_name, PAPERS.paper_code, MARKS.marks, PAPERS.marked_out_of 
         FROM o_level_student_marks AS MARKS 
         JOIN o_level_subejcts_papers AS PAPERS ON PAPERS.id = MARKS.subject_paper_id
         JOIN o_level_subejcts AS SUBJECTS ON SUBJECTS.id = PAPERS.subject_id
@@ -690,7 +690,17 @@ if (isset($_GET['delete_A_level_student'])) {
     $mark_id = $_POST['mark_id'];
     $paper_mark = $_POST['paper_mark'];
 
-    $sql = "UPDATE `o_level_student_marks` SET marks = '$paper_mark' WHERE id= $mark_id ";
+    // Get paper marked out of 
+
+    $stmt = $conn->query("SELECT PAPERS.marked_out_of  
+        FROM o_level_student_marks MARKS 
+        LEFT JOIN o_level_subejcts_papers PAPERS ON PAPERS.id = MARKS.subject_paper_id 
+        WHERE MARKS.id = $mark_id ");
+    $marked_out_of = $stmt->fetchObject()->marked_out_of;
+    
+    $actual_mark = ($paper_mark) * (100 / $marked_out_of);
+
+    $sql = "UPDATE `o_level_student_marks` SET marks = '$actual_mark' WHERE id= $mark_id ";
     
 
     $conn->exec($sql);
