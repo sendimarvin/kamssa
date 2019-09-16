@@ -214,7 +214,7 @@ class OLevelStudentReport {
     {
         $total_credits = 0;
         foreach ($subject_details as $key => $subject_detail) {
-            if ($subject_detail['points'] <> 'X' && $subject_detail['points'] >= 3 && $subject_detail['points'] <= 6)
+            if ($subject_detail['points'] <> 'X' && $subject_detail['points'] <= 6)
                 ++$total_credits;
         }
         return $total_credits;
@@ -304,16 +304,17 @@ class OLevelStudentReport {
         // $has_done_all_complusory_subject = $this->has_done_all_complusory_subject($subject_details);
         // $has_done_less_than_8_subjects = $this->has_done_less_than_8_subjects($subject_details);
 
-        if ($aggregates > 69 && $aggregates <= 72 ) {
-            return 9; 
-        } elseif ($aggregates > 58 && $aggregates <= 69 && ( ($total_credits == 1) || ($total_pass7s == 2) || ($total_pass8s == 3) )) {
-            return 4;
-        } elseif ($aggregates > 45 && $aggregates <= 58 && ( ($total_credits == 5) || (($total_credits == 4) && ($total_passes == 3)) || (($total_credits == 3) && ($total_passes == 5)) )) {
-            return 3;
-        } elseif ($aggregates > 32 && $aggregates <= 45 && ($is_maths_greater_than_pass8 && $is_english_greater_than_pass8 && $total_credits >= 6)) {
-            return 2;
-        } elseif ($aggregates <= 8 && $aggregates <= 32 && ($has_atleast_credit_in_english && $has_atleast_pass8_in_maths && ($has_atleast_pass8_in_physics || $has_atleast_pass8_in_biology || $has_atleast_pass8_in_chemistry) )) {
+
+        if ($aggregates >= 8 && $aggregates <= 32 && ($has_atleast_credit_in_english && $has_atleast_pass8_in_maths && ($has_atleast_pass8_in_physics || $has_atleast_pass8_in_biology || $has_atleast_pass8_in_chemistry) )) {
             return 1;
+        } elseif ($aggregates <= 45 || $aggregates <= 45 && ($is_maths_greater_than_pass8 && $is_english_greater_than_pass8 && $total_credits >= 6)) {
+            return 2;
+        } elseif ($aggregates <= 58 || $aggregates <= 58 && ( ($total_credits == 5) || (($total_credits == 4) && ($total_passes == 3)) || (($total_credits == 3) && ($total_passes == 5)) )) {
+            return 3;
+        } elseif ( $aggregates <= 69 || $aggregates <= 69 && ( ($total_credits == 1) || ($total_pass7s == 2) || ($total_pass8s == 3) )) {
+            return 4;
+        } elseif ($aggregates <= 69 || $aggregates > 69 && $aggregates <= 72 ) {
+            return 9; 
         } else {
             return "Undefined grade";
         }
@@ -405,52 +406,17 @@ class OLevelStudentReport {
 
     }
 
-        /**
-     * Gets the grate from aggregates and other extra conditions
-     * @param int|string $aggregates => the aggregates of the best done 8 subjects
-     * @param array $subject_detail => $contains done subjects
-     * @return string|char => grade results
-    */
-    // public function getGradeNew ($aggregates, $subject_details)
-    // {
-    //     $total_pass = $this->getTotalPass ($subject_details);
-    //     // $total_pass8 = $this->getTotalPass8 ($subject_details);
-    //     // $total_credits = $this->getTotalCredits ($subject_details);
-    //     $is_maths_greater_than_pass8 = $this->is_maths_greater_than_pass8($subject_details);
-    //     $has_atleast_credit_in_english = $this->has_atleast_credit_in_english($subject_details);
-    //     $has_done_all_complusory_subject = $this->has_done_all_complusory_subject($subject_details);
-    //     $has_done_less_than_8_subjects = $this->has_done_less_than_8_subjects($subject_details);
-
-    //     // var_dump( $is_maths_greater_than_pass8);
-    //     if ($has_done_less_than_8_subjects) {
-    //         return "U";
-    //     } elseif (!$has_done_all_complusory_subject) {
-    //         return "X";
-    //     } elseif ($aggregates >= 68 && $aggregates <= 72 ) {
-    //         return 9;
-    //     } elseif ($aggregates >= 8 && $aggregates <= 32 && $total_pass >= 8 && $is_maths_greater_than_pass8 && $has_atleast_credit_in_english ) {
-    //         return 1;
-    //     } elseif ($aggregates > 8 && $aggregates <= 45 && $total_pass >=8  && ($total_pass >=8)) {
-    //         return 2;
-    //     } elseif ($aggregates > 8 && $aggregates <= 58 && $total_pass >=8) {
-    //         return 3;
-    //     } elseif ($aggregates > 8 && $aggregates <= 68) {
-    //         return 4;
-    //     } elseif ($aggregates > 68 && $aggregates <= 72) {
-    //         return 4;
-    //     } else {
-    //         return "U";
-    //     }
-    // }
 
     public function has_done_all_complusory_subject ($subject_details)
     {
         $has_done_all_complusory_subject = true;
         foreach ($subject_details as $key => $subject) {
             if ($subject['is_core'] > 0) {
-                if ($subject['points'] == 'X')
-                $has_done_all_complusory_subject = false;
-                break;
+                if ($subject['points'] == 'X') {
+                    $has_done_all_complusory_subject = false;
+                    break;
+                }
+                
             }
         }
         return $has_done_all_complusory_subject;
